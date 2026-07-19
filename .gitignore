@@ -1,0 +1,19 @@
+# environment
+.env
+myenv/
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+
+# django
+db.sqlite3
+staticfiles/
+media/
+
+# mac
+.DS_Store
+
+# editor
+.vscode/
