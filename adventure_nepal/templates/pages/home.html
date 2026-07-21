@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Adventure Nepal — Trek the Himalayas{% endblock %}
+{% block content %}
+<!-- Hero -->
+<section class="hero d-flex align-items-center text-white text-center">
+  <div class="container" data-aos="fade-up">
+    <h1 class="display-3 fw-bold">Discover the Himalayas</h1>
+    <p class="lead mb-4 col-lg-7 mx-auto">Trek, explore, and connect with expert local guides across Nepal's most breathtaking trails.</p>
+    <a href="#treks" class="btn btn-primary btn-lg px-4 me-2">Explore Treks</a>
+    <a href="{% url 'about' %}" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+  </div>
+</section>
+
+<!-- Stats strip -->
+<section class="py-4 bg-primary text-white">
+  <div class="container">
+    <div class="row text-center g-3">
+      <div class="col-6 col-md-3"><h3 class="fw-bold mb-0">500+</h3><small>Happy Trekkers</small></div>
+      <div class="col-6 col-md-3"><h3 class="fw-bold mb-0">25+</h3><small>Trek Routes</small></div>
+      <div class="col-6 col-md-3"><h3 class="fw-bold mb-0">40+</h3><small>Expert Guides</small></div>
+      <div class="col-6 col-md-3"><h3 class="fw-bold mb-0">10+</h3><small>Years Experience</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- Popular treks -->
+<section class="py-5" id="treks">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-2" data-aos="fade-up">Popular Destinations</h2>
+    <p class="text-center text-secondary mb-4" data-aos="fade-up">Handpicked treks loved by our travelers</p>
+    <div class="swiper heroSwiper" data-aos="fade-up">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide">
+          <div class="trek-card">
+            <img src="{% static 'img/everest.jpeg' %}" alt="Everest Base Camp">
+            <div class="trek-card-body"><h5>Everest Base Camp</h5><p class="text-secondary small mb-0">14 Days · Difficult</p></div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="trek-card">
+            <img src="{% static 'img/annapurna.jpg' %}" alt="Annapurna Circuit">
+            <div class="trek-card-body"><h5>Annapurna Circuit</h5><p class="text-secondary small mb-0">12 Days · Moderate</p></div>
+          </div>
+        </div>
+        <div class="swiper-slide">
+          <div class="trek-card">
+            <img src="{% static 'img/langtang.jpg' %}" alt="Langtang Valley">
+            <div class="trek-card-body"><h5>Langtang Valley</h5><p class="text-secondary small mb-0">7 Days · Easy-Moderate</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+<!-- Why choose us -->
+<section class="py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center fw-bold mb-5" data-aos="fade-up">Why Trek With Us</h2>
+    <div class="row g-4 text-center">
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="feature-icon mb-3">🧭</div><h5>Local Expert Guides</h5>
+        <p class="text-secondary">Certified guides who know every trail, culture, and hidden viewpoint.</p>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="feature-icon mb-3">🛡️</div><h5>Safety First</h5>
+        <p class="text-secondary">Full insurance coverage and emergency support on every trek.</p>
+      </div>
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="feature-icon mb-3">💰</div><h5>Fair Pricing</h5>
+        <p class="text-secondary">Transparent pricing with no hidden costs, ever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 cta-section text-white text-center">
+  <div class="container" data-aos="zoom-in">
+    <h2 class="fw-bold mb-3">Ready for Your Next Adventure?</h2>
+    <p class="mb-4">Join hundreds of trekkers exploring Nepal with us this season.</p>
+    <a href="#" class="btn btn-light btn-lg px-4">Book Your Trek</a>
+  </div>
+</section>
+{% endblock %}

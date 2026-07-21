@@ -1,0 +1,13 @@
+:root { --primary: #0d6efd; --dark: #1a1a2e; }
+body { font-family: 'Poppins', sans-serif; }
+.hero {
+  min-height: 90vh;
+  background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url("/static/img/hero-bg.jpg") center/cover no-repeat;
+}
+.navbar-nav .nav-link.active { color: #fff !important; font-weight: 600; border-bottom: 2px solid var(--primary); }
+.trek-card { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); background: #fff; }
+.trek-card img { width: 100%; height: 260px; object-fit: cover; }
+.trek-card-body { padding: 1rem; }
+.feature-icon { font-size: 2.5rem; }
+.cta-section { background: linear-gradient(135deg, var(--dark), var(--primary)); }
+.swiper-pagination-bullet-active { background: var(--primary) !important; }

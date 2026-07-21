@@ -1,0 +1,30 @@
+<footer id="footer" class="bg-dark text-light pt-5 pb-3 mt-5">
+  <div class="container">
+    <div class="row gy-4">
+      <div class="col-md-4">
+        <h5 class="fw-bold mb-3">Adventure Nepal</h5>
+        <p class="text-secondary">Trekking and travel experiences across the Himalayas, guided by locals who know the trails best.</p>
+        <div class="d-flex gap-3 fs-5">
+          <a href="#" class="text-light"><i class="bi bi-facebook"></i> FB</a>
+          <a href="#" class="text-light"><i class="bi bi-instagram"></i> IG</a>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <h5 class="fw-bold mb-3">Quick Links</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2"><a href="{% url 'home' %}" class="text-secondary text-decoration-none">Home</a></li>
+          <li class="mb-2"><a href="#treks" class="text-secondary text-decoration-none">Treks</a></li>
+          <li class="mb-2"><a href="{% url 'about' %}" class="text-secondary text-decoration-none">About</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h5 class="fw-bold mb-3">Contact</h5>
+        <p class="text-secondary mb-1">📍 Thamel, Kathmandu, Nepal</p>
+        <p class="text-secondary mb-1">✉️ info@adventurenepal.com</p>
+        <p class="text-secondary">📞 +977 9800000000</p>
+      </div>
+    </div>
+    <hr class="border-secondary mt-4">
+    <p class="text-center text-secondary mb-0 small">&copy; {% now "Y" %} Adventure Nepal. All rights reserved.</p>
+  </div>
+</footer>
