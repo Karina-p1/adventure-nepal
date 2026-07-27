@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ trek.title }} — Adventure Nepal{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-8" data-aos="fade-up">
+        <img src="{{ trek.cover_image.url }}" class="img-fluid rounded mb-4" alt="{{ trek.title }}">
+        <h1 class="fw-bold">{{ trek.title }}</h1>
+        <p class="text-secondary">{{ trek.short_description }}</p>
+
+        <div class="d-flex gap-4 my-3 flex-wrap">
+          <span>📅 {{ trek.duration_days }} Days</span>
+          <span>⛰️ {{ trek.max_altitude_m }}m</span>
+          <span>💪 {{ trek.get_difficulty_display }}</span>
+          <span>👥 {{ trek.group_size_min }}–{{ trek.group_size_max }} people</span>
+        </div>
+
+        <h3 class="mt-5 mb-3">Overview</h3>
+        <p>{{ trek.description|linebreaks }}</p>
+
+        {% if trek.itinerary_days.all %}
+          <h3 class="mt-5 mb-3">Itinerary</h3>
+          <div class="accordion" id="itineraryAccordion">
+            {% for day in trek.itinerary_days.all %}
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button"
+                          data-bs-toggle="collapse" data-bs-target="#day{{ day.day_number }}">
+                    Day {{ day.day_number }}: {{ day.title }}
+                  </button>
+                </h2>
+                <div id="day{{ day.day_number }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                     data-bs-parent="#itineraryAccordion">
+                  <div class="accordion-body">
+                    {{ day.description }}
+                    {% if day.altitude_m %}<p class="text-secondary small mb-0">Altitude: {{ day.altitude_m }}m</p>{% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if trek.gallery_images.all %}
+          <h3 class="mt-5 mb-3">Gallery</h3>
+          <div class="row g-2">
+            {% for img in trek.gallery_images.all %}
+              <div class="col-4">
+                <img src="{{ img.image.url }}" class="img-fluid rounded" alt="{{ img.caption }}">
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4" data-aos="fade-up">
+        <div class="border rounded p-4 sticky-top" style="top: 90px;">
+          <h3 class="fw-bold mb-3">
+            {% if trek.has_discount %}
+              <span class="text-decoration-line-through text-secondary fs-6">${{ trek.price_usd }}</span><br>
+            {% endif %}
+            ${{ trek.display_price }} <span class="fs-6 text-secondary">/ person</span>
+          </h3>
+          {% if trek.guide %}
+            <p class="text-secondary small">Guided by {{ trek.guide.get_full_name|default:trek.guide.username }}</p>
+          {% endif %}
+          <a href="#" class="btn btn-primary w-100 mt-2">Book Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

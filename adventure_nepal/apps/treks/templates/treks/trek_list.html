@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Treks — Adventure Nepal{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <h1 class="fw-bold mb-4" data-aos="fade-up">All Treks</h1>
+
+    <!-- Filters -->
+    <form method="get" class="row g-3 mb-4" data-aos="fade-up">
+      <div class="col-md-4">
+        <select name="region" class="form-select" onchange="this.form.submit()">
+          <option value="">All Regions</option>
+          {% for region in regions %}
+            <option value="{{ region.slug }}" {% if region.slug == selected_region %}selected{% endif %}>
+              {{ region.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select name="difficulty" class="form-select" onchange="this.form.submit()">
+          <option value="">All Difficulties</option>
+          {% for value, label in difficulties %}
+            <option value="{{ value }}" {% if value == selected_difficulty %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </form>
+
+    <!-- Trek grid -->
+    <div class="row g-4">
+      {% for trek in treks %}
+        <div class="col-md-4" data-aos="fade-up">
+          <div class="trek-card h-100">
+            <a href="{{ trek.get_absolute_url }}">
+              <img src="{{ trek.cover_image.url }}" alt="{{ trek.title }}">
+            </a>
+            <div class="trek-card-body">
+              <h5>{{ trek.title }}</h5>
+              <p class="text-secondary small mb-2">
+                {{ trek.duration_days }} Days · {{ trek.get_difficulty_display }}
+              </p>
+              <p class="fw-bold mb-2">
+                {% if trek.has_discount %}
+                  <span class="text-decoration-line-through text-secondary small">${{ trek.price_usd }}</span>
+                {% endif %}
+                ${{ trek.display_price }}
+              </p>
+              <a href="{{ trek.get_absolute_url }}" class="btn btn-outline-primary btn-sm">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-secondary">No treks match your filters yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

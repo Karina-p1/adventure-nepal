@@ -7,7 +7,7 @@
   <div class="container" data-aos="fade-up">
     <h1 class="display-3 fw-bold">Discover the Himalayas</h1>
     <p class="lead mb-4 col-lg-7 mx-auto">Trek, explore, and connect with expert local guides across Nepal's most breathtaking trails.</p>
-    <a href="#treks" class="btn btn-primary btn-lg px-4 me-2">Explore Treks</a>
+    <a href="{% url 'treks:list' %}" class="btn btn-primary btn-lg px-4 me-2">Explore Treks</a>
     <a href="{% url 'about' %}" class="btn btn-outline-light btn-lg px-4">Learn More</a>
   </div>
 </section>
@@ -29,29 +29,26 @@
   <div class="container">
     <h2 class="text-center fw-bold mb-2" data-aos="fade-up">Popular Destinations</h2>
     <p class="text-center text-secondary mb-4" data-aos="fade-up">Handpicked treks loved by our travelers</p>
-    <div class="swiper heroSwiper" data-aos="fade-up">
-      <div class="swiper-wrapper">
-        <div class="swiper-slide">
-          <div class="trek-card">
-            <img src="{% static 'img/everest.jpeg' %}" alt="Everest Base Camp">
-            <div class="trek-card-body"><h5>Everest Base Camp</h5><p class="text-secondary small mb-0">14 Days · Difficult</p></div>
-          </div>
-        </div>
-        <div class="swiper-slide">
-          <div class="trek-card">
-            <img src="{% static 'img/annapurna.jpg' %}" alt="Annapurna Circuit">
-            <div class="trek-card-body"><h5>Annapurna Circuit</h5><p class="text-secondary small mb-0">12 Days · Moderate</p></div>
-          </div>
-        </div>
-        <div class="swiper-slide">
-          <div class="trek-card">
-            <img src="{% static 'img/langtang.jpg' %}" alt="Langtang Valley">
-            <div class="trek-card-body"><h5>Langtang Valley</h5><p class="text-secondary small mb-0">7 Days · Easy-Moderate</p></div>
+<div class="swiper heroSwiper" data-aos="fade-up">
+  <div class="swiper-wrapper">
+    {% for trek in featured_treks %}
+      <div class="swiper-slide">
+        <div class="trek-card">
+          <a href="{{ trek.get_absolute_url }}">
+            <img src="{{ trek.cover_image.url }}" alt="{{ trek.title }}">
+          </a>
+          <div class="trek-card-body">
+            <h5>{{ trek.title }}</h5>
+            <p class="text-secondary small mb-0">{{ trek.duration_days }} Days · {{ trek.get_difficulty_display }}</p>
           </div>
         </div>
       </div>
-      <div class="swiper-pagination"></div>
-    </div>
+    {% empty %}
+      <p class="text-secondary">No featured treks yet — add some in the admin.</p>
+    {% endfor %}
+  </div>
+  <div class="swiper-pagination"></div>
+</div>
   </div>
 </section>
 

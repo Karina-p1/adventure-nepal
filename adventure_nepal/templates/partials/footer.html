@@ -13,7 +13,9 @@
         <h5 class="fw-bold mb-3">Quick Links</h5>
         <ul class="list-unstyled">
           <li class="mb-2"><a href="{% url 'home' %}" class="text-secondary text-decoration-none">Home</a></li>
-          <li class="mb-2"><a href="#treks" class="text-secondary text-decoration-none">Treks</a></li>
+          <li class="nav-item">
+  <a class="nav-link {% if request.resolver_match.url_name == 'list' %}active{% endif %}" href="{% url 'treks:list' %}">Treks</a>
+</li>
           <li class="mb-2"><a href="{% url 'about' %}" class="text-secondary text-decoration-none">About</a></li>
         </ul>
       </div>
