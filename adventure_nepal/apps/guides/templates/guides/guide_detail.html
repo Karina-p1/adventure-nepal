@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ guide.get_full_name }} — Adventure Nepal{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-4 text-center" data-aos="fade-up">
+        {% if guide.avatar %}
+          <img src="{{ guide.avatar.url }}" class="rounded-circle mb-3" width="180" height="180" style="object-fit: cover;" alt="{{ guide.get_full_name }}">
+        {% else %}
+          <div class="rounded-circle bg-light mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:180px; height:180px; font-size:3rem;">
+            {{ guide.first_name|first|default:guide.username|first }}
+          </div>
+        {% endif %}
+        <h2 class="fw-bold">{{ guide.get_full_name|default:guide.username }}</h2>
+        {% if guide.guide_profile %}
+          <p class="text-secondary">{{ guide.guide_profile.specialization|default:"General Trekking Guide" }}</p>
+        {% endif %}
+      </div>
+
+      <div class="col-lg-8" data-aos="fade-up">
+        {% if guide.guide_profile %}
+          <div class="d-flex gap-4 mb-4 flex-wrap">
+            <span>🏔️ {{ guide.guide_profile.experience_years }} years experience</span>
+            {% if guide.guide_profile.languages %}
+              <span>🗣️ {{ guide.guide_profile.languages }}</span>
+            {% endif %}
+          </div>
+
+          {% if guide.guide_profile.bio %}
+            <h4 class="mb-2">About</h4>
+            <p class="text-secondary">{{ guide.guide_profile.bio|linebreaks }}</p>
+          {% endif %}
+
+          {% if guide.guide_profile.certifications %}
+            <h4 class="mt-4 mb-2">Certifications</h4>
+            <p class="text-secondary">{{ guide.guide_profile.certifications }}</p>
+          {% endif %}
+        {% endif %}
+
+        {% if guide.treks_guided.all %}
+          <h4 class="mt-5 mb-3">Treks Led</h4>
+          <div class="row g-3">
+            {% for trek in guide.treks_guided.all %}
+              <div class="col-md-6">
+                <a href="{{ trek.get_absolute_url }}" class="text-decoration-none text-dark">
+                  <div class="trek-card">
+                    <img src="{{ trek.cover_image.url }}" alt="{{ trek.title }}">
+                    <div class="trek-card-body">
+                      <h6 class="mb-0">{{ trek.title }}</h6>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

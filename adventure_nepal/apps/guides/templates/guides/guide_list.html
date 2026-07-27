@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Our Guides — Adventure Nepal{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <h1 class="fw-bold mb-2" data-aos="fade-up">Meet Our Guides</h1>
+    <p class="text-secondary mb-4" data-aos="fade-up">Certified local experts who lead every trek</p>
+
+    <div class="row g-4">
+      {% for guide in guides %}
+        <div class="col-md-4" data-aos="fade-up">
+          <div class="trek-card h-100 text-center p-4">
+            {% if guide.avatar %}
+              <img src="{{ guide.avatar.url }}" class="rounded-circle mb-3" width="120" height="120" style="object-fit: cover;" alt="{{ guide.get_full_name }}">
+            {% else %}
+              <div class="rounded-circle bg-light mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:120px; height:120px; font-size:2rem;">
+                {{ guide.first_name|first|default:guide.username|first }}
+              </div>
+            {% endif %}
+            <h5>{{ guide.get_full_name|default:guide.username }}</h5>
+            {% if guide.guide_profile %}
+              <p class="text-secondary small mb-2">{{ guide.guide_profile.experience_years }} years experience</p>
+              <p class="text-secondary small">{{ guide.guide_profile.specialization|default:"General trekking" }}</p>
+            {% endif %}
+            <a href="{% url 'guides:detail' guide.pk %}" class="btn btn-outline-primary btn-sm mt-2">View Profile</a>
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-secondary">No guides listed yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
