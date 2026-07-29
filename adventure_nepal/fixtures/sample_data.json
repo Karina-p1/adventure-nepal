@@ -1,0 +1,424 @@
+[
+{
+  "model": "accounts.customuser",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$1DkLaQK6gl4A9Ryr04hbjk$LEwoKtra3D1S6U/AzXlDqMCe6CM9Q9Lla4Fo9usb2WQ=",
+    "last_login": "2026-07-27T09:18:42.328Z",
+    "is_superuser": true,
+    "username": "karina",
+    "first_name": "Karina",
+    "last_name": "Paudel",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-07-19T08:05:33Z",
+    "role": "customer",
+    "email": "karinapaudel821@gmail.com",
+    "phone": "",
+    "avatar": "",
+    "is_email_verified": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$urodSDALK86ASE3FJQUkYE$Yj6RXpWySp2hu6LFSjaH+rbCBP/I4CuL2yB1MPGHfZ4=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "kanchan",
+    "first_name": "Kanchan",
+    "last_name": "Paudel",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-19T09:42:17Z",
+    "role": "guide",
+    "email": "kanchanpaudel97@gmail.com",
+    "phone": "",
+    "avatar": "",
+    "is_email_verified": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customuser",
+  "pk": 5,
+  "fields": {
+    "password": "pbkdf2_sha256$600000$va9hsoZcyVnnOzoU8t88Ao$bmxFq+fxHhF6z20kfV6D1Q6hhhPjuHqeMq6+0jwk5jA=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "Nita",
+    "first_name": "Nita",
+    "last_name": "Paudel",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-07-19T09:59:58Z",
+    "role": "guide",
+    "email": "nitapaudel@gmail.com",
+    "phone": "",
+    "avatar": "",
+    "is_email_verified": true,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "accounts.customerprofile",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "address": "",
+    "date_of_birth": null,
+    "emergency_contact_name": "",
+    "emergency_contact_phone": "",
+    "created_at": "2026-07-19T08:05:34.645Z",
+    "updated_at": "2026-07-19T08:05:34.645Z"
+  }
+},
+{
+  "model": "accounts.guideprofile",
+  "pk": 2,
+  "fields": {
+    "user": 2,
+    "bio": "Kanchan is one of our most experienced high-altitude guides, having summited multiple peaks above 6,000m. He specializes in demanding treks like Everest Base Camp and Manaslu Circuit, prioritizing safety and acclimatization above all.",
+    "experience_years": 12,
+    "languages": "English, Nepali, Hindi",
+    "specialization": "High-altitude trekking, mountaineering support",
+    "certifications": "Wilderness First Responder, NMA Licensed Guide, Khumbu Rescue Certified",
+    "created_at": "2026-07-19T10:06:59.074Z",
+    "updated_at": "2026-07-27T08:53:28.517Z"
+  }
+},
+{
+  "model": "accounts.guideprofile",
+  "pk": 3,
+  "fields": {
+    "user": 5,
+    "bio": "Nita has spent over a decade leading treks through the Annapurna region, with a special passion for introducing trekkers to local Gurung culture along the way. She's known for her calm, steady pace on high-altitude passes.",
+    "experience_years": 10,
+    "languages": "English, Nepali, Gurung",
+    "specialization": "Annapurna region, cultural treks",
+    "certifications": "Nepal Mountaineering Association Licensed Guide, Wilderness First Aid",
+    "created_at": "2026-07-19T10:07:33.616Z",
+    "updated_at": "2026-07-27T08:51:58.106Z"
+  }
+},
+{
+  "model": "treks.trekregion",
+  "pk": 1,
+  "fields": {
+    "name": "Everest Region",
+    "slug": "everest-region",
+    "description": "Home to the world's highest peak, Everest region treks pass through Sherpa villages, ancient monasteries, and dramatic high-altitude landscapes in the Khumbu."
+  }
+},
+{
+  "model": "treks.trekregion",
+  "pk": 2,
+  "fields": {
+    "name": "Annapurna Region",
+    "slug": "annapurna-region",
+    "description": "Nepal's most diverse trekking region, featuring terraced farmland, rhododendron forests, and panoramic views of the Annapurna massif."
+  }
+},
+{
+  "model": "treks.trekregion",
+  "pk": 3,
+  "fields": {
+    "name": "Langtang Region",
+    "slug": "langtang-region",
+    "description": "The Langtang region is a stunning Himalayan trekking destination located about 80 kilometers north of Kathmandu in Nepal's Rasuwa District"
+  }
+},
+{
+  "model": "treks.trek",
+  "pk": 1,
+  "fields": {
+    "title": "Everest Base Camp Trek",
+    "slug": "everest-base-camp-trek",
+    "region": 1,
+    "guide": null,
+    "short_description": "Trek to the base of the world's tallest mountain through Sherpa villages and stunning Himalayan scenery.",
+    "description": "he Everest Base Camp Trek is one of the most iconic treks in the world. Starting with a thrilling flight to Lukla, the trail winds through the Khumbu valley, passing Namche Bazaar, Tengboche Monastery, and Dingboche before reaching Everest Base Camp at 5,364m. Along the way, trekkers are treated to close-up views of Everest, Lhotse, Nuptse, and Ama Dablam.",
+    "duration_days": 14,
+    "max_altitude_m": 5364,
+    "difficulty": "difficult",
+    "group_size_min": 2,
+    "group_size_max": 12,
+    "best_season": "Mar–May, Sep–Nov",
+    "price_usd": "1450.00",
+    "discount_price_usd": "1299.00",
+    "cover_image": "treks/covers/ebc.jpeg",
+    "is_featured": true,
+    "is_active": true,
+    "created_at": "2026-07-27T07:54:55.064Z",
+    "updated_at": "2026-07-27T07:54:55.064Z"
+  }
+},
+{
+  "model": "treks.trek",
+  "pk": 2,
+  "fields": {
+    "title": "Annapurna Circuit Trek",
+    "slug": "annapurna-circuit-trek",
+    "region": 2,
+    "guide": 5,
+    "short_description": "Circle the Annapurna massif through diverse landscapes, from subtropical forests to high alpine desert.",
+    "description": "The Annapurna Circuit is famous for its dramatic diversity — trekkers pass through terraced farmland, rhododendron forests, and traditional Gurung villages before crossing the dramatic Thorong La Pass at 5,416m. The descent into the Kali Gandaki, the world's deepest gorge, reveals an entirely different landscape of arid highland desert reminiscent of Tibet.",
+    "duration_days": 12,
+    "max_altitude_m": 5416,
+    "difficulty": "moderate",
+    "group_size_min": 2,
+    "group_size_max": 12,
+    "best_season": "Mar–May, Sep–Nov",
+    "price_usd": "1250.00",
+    "discount_price_usd": null,
+    "cover_image": "treks/covers/annapurna_circuit.jpg",
+    "is_featured": true,
+    "is_active": true,
+    "created_at": "2026-07-27T08:27:26.531Z",
+    "updated_at": "2026-07-27T08:27:26.531Z"
+  }
+},
+{
+  "model": "treks.trek",
+  "pk": 3,
+  "fields": {
+    "title": "Langtang Valley Trek",
+    "slug": "langtang-valley-trek",
+    "region": 3,
+    "guide": 2,
+    "short_description": "A shorter Himalayan trek through Tamang villages and glacial valleys, closest to Kathmandu.",
+    "description": "The Langtang Valley Trek is ideal for trekkers with limited time who still want a genuine Himalayan experience. Starting just a few hours from Kathmandu, the trail follows the Langtang Khola through dense forest, Tamang villages, and yak pastures, with close-up views of Langtang Lirung. The trek also passes through areas rebuilt after the 2015 earthquake, offering insight into the resilience of local communities.",
+    "duration_days": 7,
+    "max_altitude_m": 3870,
+    "difficulty": "easy",
+    "group_size_min": 2,
+    "group_size_max": 12,
+    "best_season": "Mar–May, Sep–Dec",
+    "price_usd": "750.00",
+    "discount_price_usd": "650.00",
+    "cover_image": "treks/covers/Langtang_valley_trek.jpg",
+    "is_featured": true,
+    "is_active": true,
+    "created_at": "2026-07-27T08:34:08.864Z",
+    "updated_at": "2026-07-27T08:34:08.864Z"
+  }
+},
+{
+  "model": "treks.trekitineraryday",
+  "pk": 1,
+  "fields": {
+    "trek": 1,
+    "day_number": 1,
+    "title": "Fly to Lukla, trek to Phakding",
+    "description": "Scenic mountain flight followed by an easy trek along the Dudh Koshi river.",
+    "altitude_m": 2610,
+    "distance_km": "8.0"
+  }
+},
+{
+  "model": "treks.trekitineraryday",
+  "pk": 2,
+  "fields": {
+    "trek": 1,
+    "day_number": 2,
+    "title": "Trek to Namche Bazaar",
+    "description": "Steep climb to the Sherpa capital, with first views of Everest.",
+    "altitude_m": 3440,
+    "distance_km": "10.0"
+  }
+},
+{
+  "model": "treks.trekitineraryday",
+  "pk": 3,
+  "fields": {
+    "trek": 1,
+    "day_number": 3,
+    "title": "Acclimatization day in Namche",
+    "description": "Rest day with a short hike to the Everest View Hotel.",
+    "altitude_m": 3440,
+    "distance_km": "4.0"
+  }
+},
+{
+  "model": "treks.trekitineraryday",
+  "pk": 4,
+  "fields": {
+    "trek": 2,
+    "day_number": 1,
+    "title": "Drive to Besisahar, trek to Ngadi",
+    "description": "Jeep ride from Kathmandu followed by a short trek along the Marsyangdi river.",
+    "altitude_m": 930,
+    "distance_km": "5.0"
+  }
+},
+{
+  "model": "treks.trekitineraryday",
+  "pk": 5,
+  "fields": {
+    "trek": 2,
+    "day_number": 2,
+    "title": "Trek to Chame",
+    "description": "Walk through forest and terraced fields to the district headquarters of Manang.",
+    "altitude_m": 2670,
+    "distance_km": "15.0"
+  }
+},
+{
+  "model": "treks.trekitineraryday",
+  "pk": 6,
+  "fields": {
+    "trek": 2,
+    "day_number": 3,
+    "title": "Cross Thorong La Pass",
+    "description": "The circuit's highest and most demanding day, crossing the pass before descending to Muktinath.",
+    "altitude_m": 5416,
+    "distance_km": "19.0"
+  }
+},
+{
+  "model": "treks.trekitineraryday",
+  "pk": 7,
+  "fields": {
+    "trek": 3,
+    "day_number": 1,
+    "title": "Drive to Syabrubesi",
+    "description": "Scenic drive from Kathmandu through hills and terraced farmland.",
+    "altitude_m": 1550,
+    "distance_km": null
+  }
+},
+{
+  "model": "treks.trekitineraryday",
+  "pk": 8,
+  "fields": {
+    "trek": 3,
+    "day_number": 2,
+    "title": "Trek to Lama Hotel",
+    "description": "Forest trail alongside the Langtang Khola, with chances to spot red pandas.",
+    "altitude_m": 2470,
+    "distance_km": "12.0"
+  }
+},
+{
+  "model": "treks.trekitineraryday",
+  "pk": 9,
+  "fields": {
+    "trek": 3,
+    "day_number": 3,
+    "title": "Trek to Langtang Village",
+    "description": "Open valley walk with views of Langtang Lirung and surrounding peaks.",
+    "altitude_m": 3430,
+    "distance_km": "11.0"
+  }
+},
+{
+  "model": "treks.trekimage",
+  "pk": 1,
+  "fields": {
+    "trek": 1,
+    "image": "treks/gallery/kalapatthar-mount-everest-sunrise-view-everest-base-camp-trek.jpg.webp",
+    "caption": "View of Everest from Kala Patthar",
+    "order": 1
+  }
+},
+{
+  "model": "treks.trekimage",
+  "pk": 2,
+  "fields": {
+    "trek": 1,
+    "image": "treks/gallery/Suspension_bridge_near_Namche.jpeg",
+    "caption": "Suspension bridge near Namche",
+    "order": 2
+  }
+},
+{
+  "model": "treks.trekimage",
+  "pk": 3,
+  "fields": {
+    "trek": 2,
+    "image": "treks/gallery/thorongla_pass.jpeg",
+    "caption": "Thorong La Pass at sunrise",
+    "order": 1
+  }
+},
+{
+  "model": "treks.trekimage",
+  "pk": 4,
+  "fields": {
+    "trek": 2,
+    "image": "treks/gallery/Terraced_fields_near_Chame.webp",
+    "caption": "Terraced fields near Chame",
+    "order": 2
+  }
+},
+{
+  "model": "treks.trekimage",
+  "pk": 5,
+  "fields": {
+    "trek": 3,
+    "image": "treks/gallery/Langtang_Lirung_from_the_valley_floor.jpg",
+    "caption": "Langtang Lirung from the valley floor",
+    "order": 1
+  }
+},
+{
+  "model": "treks.trekimage",
+  "pk": 6,
+  "fields": {
+    "trek": 3,
+    "image": "treks/gallery/Yak_grazing_near_Kyanjin_Gompa.jpeg",
+    "caption": "Yak grazing near Kyanjin Gompa",
+    "order": 2
+  }
+},
+{
+  "model": "bookings.booking",
+  "pk": 1,
+  "fields": {
+    "customer": 1,
+    "trek": 3,
+    "trek_date": "2026-08-30",
+    "number_of_people": 4,
+    "special_requests": "",
+    "status": "completed",
+    "total_price_usd": "2600.00",
+    "created_at": "2026-07-27T09:10:39.310Z",
+    "updated_at": "2026-07-29T07:24:48.231Z"
+  }
+},
+{
+  "model": "bookings.booking",
+  "pk": 2,
+  "fields": {
+    "customer": 1,
+    "trek": 1,
+    "trek_date": "2026-07-31",
+    "number_of_people": 3,
+    "special_requests": "",
+    "status": "completed",
+    "total_price_usd": "3897.00",
+    "created_at": "2026-07-29T07:21:28.101Z",
+    "updated_at": "2026-07-29T07:24:45.268Z"
+  }
+},
+{
+  "model": "reviews.review",
+  "pk": 1,
+  "fields": {
+    "customer": 1,
+    "trek": 3,
+    "booking": 1,
+    "rating": 4,
+    "title": "The Langtang Valley Trek is one of Nepal's best value treks. It combines spectacular mountain scenery, authentic local culture, and a relatively acces",
+    "comment": "Pros\r\n\r\n🏔️ Stunning Himalayan views, especially from Kyanjin Ri and Tserko Ri.\r\n🌲 Beautiful forests, rivers, waterfalls, glaciers, and alpine meadows.\r\n🛕 Rich Tamang culture and the peaceful Kyanjin Gompa monastery.\r\n🚙 No domestic flight required—only a drive from Kathmandu.\r\n💰 More affordable and less crowded than Everest Base Camp or Annapurna Base Camp.\r\n\r\nCons\r\n\r\n🚌 The road to Syabrubesi can be long and bumpy.\r\n🫁 Altitude sickness is still a risk above 3,000 m.\r\n🏠 Teahouses are basic, and food/accommodation become more expensive at higher elevations.\r\n🌧️ Monsoon season can bring rain, muddy trails, and occasional landslides.\r\n\r\nDifficulty\r\n\r\nModerate\r\nSuitable for beginners with a reasonable fitness level.\r\nUsually completed in 7–10 days.\r\n\r\nBest time to go\r\n\r\n🌸 Spring: March–May\r\n🍁 Autumn: September–November\r\nThese seasons offer the clearest mountain views and the best trekking conditions.",
+    "is_approved": true,
+    "created_at": "2026-07-29T07:26:27.122Z",
+    "updated_at": "2026-07-29T07:26:27.122Z"
+  }
+}
+]

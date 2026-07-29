@@ -17,3 +17,6 @@ media/
 
 # editor
 .vscode/
+
+# backup
+media_backup.tar.gz

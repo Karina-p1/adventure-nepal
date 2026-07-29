@@ -28,6 +28,7 @@ urlpatterns = [
     path("guides/", include("apps.guides.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("bookings/", include("apps.bookings.urls")),
+    path("reviews/", include("apps.reviews.urls")),
 ]
 
 if settings.DEBUG:

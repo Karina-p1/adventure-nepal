@@ -79,6 +79,16 @@ class Trek(models.Model):
     def has_discount(self):
         return bool(self.discount_price_usd and self.discount_price_usd < self.price_usd)
 
+    @property
+    def average_rating(self):
+        approved = self.reviews.filter(is_approved=True)
+        if not approved.exists():
+            return None
+        return round(sum(r.rating for r in approved) / approved.count(), 1)
+
+    @property
+    def review_count(self):
+        return self.reviews.filter(is_approved=True).count()
 
 class TrekItineraryDay(models.Model):
     trek = models.ForeignKey(Trek, on_delete=models.CASCADE, related_name="itinerary_days")
