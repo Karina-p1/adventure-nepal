@@ -26,6 +26,8 @@ urlpatterns = [
     path("about/", views.about, name="about"),
     path("treks/", include("apps.treks.urls")),
     path("guides/", include("apps.guides.urls")),
+    path("accounts/", include("apps.accounts.urls")),
+    path("bookings/", include("apps.bookings.urls")),
 ]
 
 if settings.DEBUG:

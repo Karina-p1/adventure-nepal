@@ -68,7 +68,11 @@
           {% if trek.guide %}
             <p class="text-secondary small">Guided by {{ trek.guide.get_full_name|default:trek.guide.username }}</p>
           {% endif %}
-          <a href="#" class="btn btn-primary w-100 mt-2">Book Now</a>
+          {% if user.is_authenticated %}
+  <a href="{% url 'bookings:create' trek.slug %}" class="btn btn-primary w-100 mt-2">Book Now</a>
+{% else %}
+  <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary w-100 mt-2">Login to Book</a>
+{% endif %}
         </div>
       </div>
     </div>

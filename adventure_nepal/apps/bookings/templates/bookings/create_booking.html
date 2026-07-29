@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Book {{ trek.title }} — Adventure Nepal{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container" style="max-width: 600px;">
+    <h1 class="fw-bold mb-1" data-aos="fade-up">Book: {{ trek.title }}</h1>
+    <p class="text-secondary mb-4" data-aos="fade-up">${{ trek.display_price }} per person</p>
+
+    {% if messages %}
+      {% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}
+    {% endif %}
+
+    <form method="post" data-aos="fade-up">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Preferred Trek Date</label>
+        {{ form.trek_date }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Number of People</label>
+        {{ form.number_of_people }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Special Requests (optional)</label>
+        {{ form.special_requests }}
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Submit Booking Request</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

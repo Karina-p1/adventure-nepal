@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Booking Confirmed — Adventure Nepal{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container text-center" style="max-width: 600px;" data-aos="zoom-in">
+    <h1 class="fw-bold mb-3">🎉 Booking Request Submitted</h1>
+    <p class="text-secondary mb-4">We've received your request for <strong>{{ booking.trek.title }}</strong>.</p>
+
+    <div class="border rounded p-4 text-start">
+      <p><strong>Trek Date:</strong> {{ booking.trek_date }}</p>
+      <p><strong>People:</strong> {{ booking.number_of_people }}</p>
+      <p><strong>Total:</strong> ${{ booking.total_price_usd }}</p>
+      <p><strong>Status:</strong> <span class="badge bg-warning text-dark">{{ booking.get_status_display }}</span></p>
+    </div>
+
+    <a href="{% url 'bookings:my_bookings' %}" class="btn btn-primary mt-4">View My Bookings</a>
+  </div>
+</section>
+{% endblock %}
