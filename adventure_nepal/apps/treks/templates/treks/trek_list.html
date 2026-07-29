@@ -7,27 +7,43 @@
   <div class="container">
     <h1 class="fw-bold mb-4" data-aos="fade-up">All Treks</h1>
 
-    <!-- Filters -->
+    <!-- Category tabs -->
+    <ul class="nav nav-pills mb-4 flex-wrap" data-aos="fade-up">
+      <li class="nav-item">
+        <a class="nav-link {% if not selected_category %}active{% endif %}" href="?{% if query %}q={{ query }}&{% endif %}">All</a>
+      </li>
+      {% for value, label in categories %}
+        <li class="nav-item">
+          <a class="nav-link {% if selected_category == value %}active{% endif %}"
+             href="?category={{ value }}{% if query %}&q={{ query }}{% endif %}">{{ label }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Search + filters -->
     <form method="get" class="row g-3 mb-4" data-aos="fade-up">
+      {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
+      <div class="col-md-4">
+        <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search treks or regions...">
+      </div>
       <div class="col-md-4">
         <select name="region" class="form-select" onchange="this.form.submit()">
           <option value="">All Regions</option>
           {% for region in regions %}
-            <option value="{{ region.slug }}" {% if region.slug == selected_region %}selected{% endif %}>
-              {{ region.name }}
-            </option>
+            <option value="{{ region.slug }}" {% if region.slug == selected_region %}selected{% endif %}>{{ region.name }}</option>
           {% endfor %}
         </select>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <select name="difficulty" class="form-select" onchange="this.form.submit()">
           <option value="">All Difficulties</option>
           {% for value, label in difficulties %}
-            <option value="{{ value }}" {% if value == selected_difficulty %}selected{% endif %}>
-              {{ label }}
-            </option>
+            <option value="{{ value }}" {% if value == selected_difficulty %}selected{% endif %}>{{ label }}</option>
           {% endfor %}
         </select>
+      </div>
+      <div class="col-md-1">
+        <button type="submit" class="btn btn-primary w-100">Go</button>
       </div>
     </form>
 
@@ -40,10 +56,9 @@
               <img src="{{ trek.cover_image.url }}" alt="{{ trek.title }}">
             </a>
             <div class="trek-card-body">
+              <span class="badge bg-secondary mb-2">{{ trek.get_category_display }}</span>
               <h5>{{ trek.title }}</h5>
-              <p class="text-secondary small mb-2">
-                {{ trek.duration_days }} Days · {{ trek.get_difficulty_display }}
-              </p>
+              <p class="text-secondary small mb-2">{{ trek.duration_days }} Days · {{ trek.get_difficulty_display }}</p>
               <p class="fw-bold mb-2">
                 {% if trek.has_discount %}
                   <span class="text-decoration-line-through text-secondary small">${{ trek.price_usd }}</span>
@@ -55,7 +70,7 @@
           </div>
         </div>
       {% empty %}
-        <p class="text-secondary">No treks match your filters yet.</p>
+        <p class="text-secondary">No treks match your search.</p>
       {% endfor %}
     </div>
   </div>

@@ -20,8 +20,8 @@ class TrekImageInline(admin.TabularInline):
 
 @admin.register(Trek)
 class TrekAdmin(admin.ModelAdmin):
-    list_display = ("title", "region", "difficulty", "duration_days", "price_usd", "is_featured", "is_active")
-    list_filter = ("difficulty", "region", "is_featured", "is_active")
+    list_display = ("title", "category", "region", "difficulty", "duration_days", "price_usd", "is_featured", "is_active")
+    list_filter = ("category", "difficulty", "region", "is_featured", "is_active")
     search_fields = ("title", "short_description")
     prepopulated_fields = {"slug": ("title",)}
     inlines = [TrekItineraryDayInline, TrekImageInline]

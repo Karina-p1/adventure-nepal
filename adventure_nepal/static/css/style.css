@@ -1,8 +1,107 @@
 :root { --primary: #0d6efd; --dark: #1a1a2e; }
 body { font-family: 'Poppins', sans-serif; }
-.hero {
-  min-height: 90vh;
-  background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url("/static/img/hero-bg.jpg") center/cover no-repeat;
+.hero-carousel {
+  position: relative;
+  min-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding-bottom: 60px; /* was 100px — reduced */
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+  z-index: 0;
+}
+
+.hero-slide.active {
+  opacity: 1;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.hero-carousel .container {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-carousel h1 {
+  font-size: 4rem;
+  font-weight: 800;
+}
+
+.hero-search-bar {
+  max-width: 800px;
+  background: #fff;
+  border-radius: 60px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+  margin-top: 3rem;
+  margin-bottom: -40px; /* pulls the next section up to overlap slightly */
+  padding: 8px;
+  position: relative;
+  z-index: 3;
+}
+
+.hero-search-bar .row {
+  align-items: center;
+}
+
+.hero-search-bar input,
+.hero-search-bar select {
+  height: 52px;
+  border-radius: 40px !important;
+  border: none !important;
+  color: #1a1a2e;
+  padding-left: 1.25rem;
+  background: transparent;
+}
+
+.hero-search-bar input:focus,
+.hero-search-bar select:focus {
+  box-shadow: none;
+}
+
+.hero-search-bar .btn {
+  height: 52px;
+  border-radius: 40px;
+  font-weight: 600;
+}
+
+.hero-search-bar .col-md-5,
+.hero-search-bar .col-md-4 {
+  border-right: 1px solid #eee;
+}
+
+@media (max-width: 767px) {
+  .hero-search-bar .col-md-5,
+  .hero-search-bar .col-md-4 {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 8px;
+  }
+}
+
+
+.nav-pills .nav-link {
+  color: #1a1a2e;
+  border: 1px solid #dee2e6;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.nav-pills .nav-link.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 .navbar-nav .nav-link.active { color: #fff !important; font-weight: 600; border-bottom: 2px solid var(--primary); }
 .trek-card { border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.08); background: #fff; }

@@ -23,6 +23,13 @@ class TrekRegion(models.Model):
 
 
 class Trek(models.Model):
+    class Category(models.TextChoices):
+        TREKKING = "trekking", "Trekking"
+        TOUR = "tour", "Tour"
+        SIGHTSEEING = "sightseeing", "Sightseeing"
+        CLIMBING = "climbing", "Climbing"
+
+    category = models.CharField(max_length=20, choices=Category.choices, default=Category.TREKKING)
     class Difficulty(models.TextChoices):
         EASY = "easy", "Easy"
         MODERATE = "moderate", "Moderate"

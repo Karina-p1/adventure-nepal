@@ -3,12 +3,40 @@
 {% block title %}Adventure Nepal — Trek the Himalayas{% endblock %}
 {% block content %}
 <!-- Hero -->
-<section class="hero d-flex align-items-center text-white text-center">
+<!-- Hero with rotating background carousel -->
+<section class="hero-carousel d-flex align-items-center text-white text-center">
+  <div class="hero-slide active" style="background-image: url('{% static 'img/hero-bg.jpg' %}');"></div>
+  <div class="hero-slide" style="background-image: url('{% static 'img/everest.jpeg' %}');"></div>
+  <div class="hero-slide" style="background-image: url('{% static 'img/annapurna.jpg' %}');"></div>
+  <div class="hero-overlay"></div>
+
   <div class="container" data-aos="fade-up">
-    <h1 class="display-3 fw-bold">Discover the Himalayas</h1>
+    <h1 class="fw-bold">Discover the Himalayas</h1>
     <p class="lead mb-4 col-lg-7 mx-auto">Trek, explore, and connect with expert local guides across Nepal's most breathtaking trails.</p>
-    <a href="{% url 'treks:list' %}" class="btn btn-primary btn-lg px-4 me-2">Explore Treks</a>
-    <a href="{% url 'about' %}" class="btn btn-outline-light btn-lg px-4">Learn More</a>
+
+    <form method="get" action="{% url 'treks:list' %}" class="hero-search-bar mx-auto mt-4">
+      <div class="row g-0">
+        <div class="col-md-5 d-flex align-items-center px-2">
+          <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+          <input type="text" name="q" class="form-control border-0" placeholder="Where are you going?">
+        </div>
+        <div class="col-md-4 d-flex align-items-center px-2">
+          <i class="bi bi-calendar3 text-secondary me-2"></i>
+          <select name="category" class="form-select border-0">
+            <option value="">Any Category</option>
+            <option value="trekking">Trekking</option>
+            <option value="tour">Tour</option>
+            <option value="sightseeing">Sightseeing</option>
+            <option value="climbing">Climbing</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-primary w-100 h-100">
+            <i class="bi bi-search me-1"></i> Search
+          </button>
+        </div>
+      </div>
+    </form>
   </div>
 </section>
 
