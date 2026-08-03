@@ -8,6 +8,13 @@ document.addEventListener("DOMContentLoaded", function () {
     pagination: { el: ".swiper-pagination", clickable: true },
     breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } },
   });
+  // Navbar solid-on-scroll
+  const navbar = document.getElementById("mainNavbar");
+  if (navbar) {
+    window.addEventListener("scroll", () => {
+      navbar.classList.toggle("scrolled", window.scrollY > 60);
+    });
+  }
 });
 
 // Hero background carousel

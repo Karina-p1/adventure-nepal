@@ -54,9 +54,8 @@
             {% endfor %}
           </div>
         {% endif %}
-      </div>
 
-<h3 class="mt-5 mb-3">
+        <h3 class="mt-5 mb-3">
           Reviews
           {% if trek.average_rating %}
             <span class="fs-6 text-secondary">({{ trek.average_rating }}★ · {{ trek.review_count }} review{{ trek.review_count|pluralize }})</span>
@@ -82,8 +81,8 @@
         {% if user.is_authenticated %}
           <a href="{% url 'reviews:add' trek.slug %}" class="btn btn-outline-primary mt-2">Write a Review</a>
         {% endif %}
+      </div>
 
-      <!-- Sidebar -->
       <div class="col-lg-4" data-aos="fade-up">
         <div class="border rounded p-4 sticky-top" style="top: 90px;">
           <h3 class="fw-bold mb-3">
@@ -96,10 +95,10 @@
             <p class="text-secondary small">Guided by {{ trek.guide.get_full_name|default:trek.guide.username }}</p>
           {% endif %}
           {% if user.is_authenticated %}
-  <a href="{% url 'bookings:create' trek.slug %}" class="btn btn-primary w-100 mt-2">Book Now</a>
-{% else %}
-  <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary w-100 mt-2">Login to Book</a>
-{% endif %}
+            <a href="{% url 'bookings:create' trek.slug %}" class="btn btn-primary w-100 mt-2">Book Now</a>
+          {% else %}
+            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary w-100 mt-2">Login to Book</a>
+          {% endif %}
         </div>
       </div>
     </div>
