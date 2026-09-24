@@ -1,59 +1,81 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top" id="mainNavbar">
+{# Links to pages built in later phases use {% url ... as var %}, which is empty (not an error) until the page exists. #}
+{% url 'destinations:list' as u_dest %}{% url 'blog:list' as u_blog %}{% url 'core:travel_info' as u_info %}
+{% with app=request.resolver_match.app_name name=request.resolver_match.url_name %}
+<nav class="navbar navbar-expand-lg site-nav" id="mainNavbar" aria-label="Main navigation">
   <div class="container">
-    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="{% url 'home' %}">
-      <span>🏔️</span> Adventure Nepal
+    <a class="navbar-brand" href="{% url 'home' %}">
+      <span aria-hidden="true">🏔️</span> {{ site.site_name|default:"Adventure Nepal" }}
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+            aria-controls="mainNav" aria-expanded="false" aria-label="Toggle menu">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="mainNav">
       <ul class="navbar-nav mx-auto align-items-lg-center">
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+        <li class="nav-item"><a class="nav-link {% if name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a></li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle {% if app == 'treks' %}active{% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Treks</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'treks:list' %}">All treks</a></li>
+            {% for r in nav_regions %}
+              <li><a class="dropdown-item" href="{% url 'treks:list' %}?region={{ r.slug|urlencode }}">{{ r.name }}</a></li>
+            {% endfor %}
+          </ul>
         </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'list' %}active{% endif %}" href="{% url 'treks:list' %}">Treks</a>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tours &amp; activities</a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="{% url 'treks:list' %}?category=tour">Tours</a></li>
+            <li><a class="dropdown-item" href="{% url 'treks:list' %}?category=sightseeing">Sightseeing</a></li>
+            <li><a class="dropdown-item" href="{% url 'treks:list' %}?category=climbing">Climbing</a></li>
+          </ul>
         </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.app_name == 'guides' %}active{% endif %}" href="{% url 'guides:list' %}">Guides</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">About</a>
-        </li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'contact:contact' %}">Contact</a></li>
+
+        {% if u_dest %}<li class="nav-item"><a class="nav-link {% if app == 'destinations' %}active{% endif %}" href="{{ u_dest }}">Destinations</a></li>{% endif %}
+        <li class="nav-item"><a class="nav-link {% if app == 'guides' %}active{% endif %}" href="{% url 'guides:list' %}">Guides</a></li>
+        <li class="nav-item"><a class="nav-link {% if name == 'about' %}active{% endif %}" href="{% url 'about' %}">About</a></li>
+        {% if u_info %}<li class="nav-item"><a class="nav-link {% if app == 'travel_info' %}active{% endif %}" href="{{ u_info }}">Travel info</a></li>{% endif %}
+        {% if u_blog %}<li class="nav-item"><a class="nav-link {% if app == 'blog' %}active{% endif %}" href="{{ u_blog }}">Blog</a></li>{% endif %}
+        <li class="nav-item"><a class="nav-link {% if app == 'contact' %}active{% endif %}" href="{% url 'contact:contact' %}">Contact</a></li>
       </ul>
 
-      <ul class="navbar-nav align-items-lg-center gap-lg-3">
-        <li class="nav-item">
-          <a class="nav-icon-link" href="{% url 'treks:list' %}" title="Search treks"><i class="bi bi-search"></i></a>
+      <ul class="navbar-nav align-items-lg-center gap-lg-2">
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon-link" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Search treks"><i class="bi bi-search"></i></a>
+          <div class="dropdown-menu dropdown-menu-end p-3 search-menu">
+            <form action="{% url 'treks:list' %}" method="get" role="search">
+              <input type="search" name="q" class="form-control" placeholder="Search treks or regions" aria-label="Search treks or regions">
+            </form>
+          </div>
         </li>
+
         {% if user.is_authenticated %}
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-              {{ user.get_full_name|default:user.username }}
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ user.first_name|default:user.username }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">Edit Profile</a></li>
-              <li><a class="dropdown-item" href="{% url 'bookings:my_bookings' %}">My Bookings</a></li>
-              <li><a class="dropdown-item" href="{% url 'admin:index' %}">Dashboard</a></li>
+              <li><a class="dropdown-item" href="{% url 'bookings:my_bookings' %}">My bookings</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">Edit profile</a></li>
+              {% if user.is_staff %}<li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin dashboard</a></li>{% endif %}
               <li><hr class="dropdown-divider"></li>
               <li>
                 <form method="post" action="{% url 'accounts:logout' %}">
                   {% csrf_token %}
-                  <button type="submit" class="dropdown-item">Logout</button>
+                  <button type="submit" class="dropdown-item">Log out</button>
                 </form>
               </li>
             </ul>
           </li>
         {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-primary btn-sm px-3" href="{% url 'accounts:signup' %}">Sign up</a>
-          </li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Log in</a></li>
         {% endif %}
+        <li class="nav-item ms-lg-1 mt-2 mt-lg-0"><a class="btn btn-accent btn-sm" href="{% url 'treks:list' %}">Book now</a></li>
       </ul>
     </div>
   </div>
 </nav>
+{% endwith %}

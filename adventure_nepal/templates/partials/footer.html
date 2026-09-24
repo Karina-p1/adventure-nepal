@@ -1,33 +1,70 @@
-<div style="height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent));"></div>
-<footer id="footer" class="text-light pt-5 pb-3" style="background: var(--dark);">
+{% url 'destinations:list' as u_dest %}{% url 'blog:list' as u_blog %}
+{% url 'core:visa' as u_visa %}{% url 'core:insurance' as u_ins %}{% url 'core:packing' as u_pack %}{% url 'core:safety' as u_safe %}{% url 'core:faqs' as u_faq %}
+{% url 'core:privacy' as u_priv %}{% url 'core:terms' as u_terms %}{% url 'core:refunds' as u_ref %}{% url 'core:cookies' as u_cook %}
+<footer class="site-footer">
   <div class="container">
-    <div class="row gy-4">
-      <div class="col-md-4">
-        <h5 class="fw-bold mb-3">Adventure Nepal</h5>
-        <p class="text-secondary">Trekking and travel experiences across the Himalayas, guided by locals who know the trails best.</p>
+    <div class="row gy-5">
+      <div class="col-lg-4">
+        <h5 class="footer-brand">{{ site.site_name|default:"Adventure Nepal" }}</h5>
+        <p>{{ site.tagline }}</p>
         <div class="d-flex gap-3 fs-5">
-          <a href="#" class="text-light"><i class="bi bi-facebook"></i> FB</a>
-          <a href="#" class="text-light"><i class="bi bi-instagram"></i> IG</a>
+          {% if site.facebook_url %}<a href="{{ site.facebook_url }}" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>{% endif %}
+          {% if site.instagram_url %}<a href="{{ site.instagram_url }}" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>{% endif %}
+          {% if site.youtube_url %}<a href="{{ site.youtube_url }}" rel="noopener" aria-label="YouTube"><i class="bi bi-youtube"></i></a>{% endif %}
+          {% if site.tiktok_url %}<a href="{{ site.tiktok_url }}" rel="noopener" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>{% endif %}
         </div>
       </div>
-      <div class="col-md-4">
-        <h5 class="fw-bold mb-3">Quick Links</h5>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6>Explore</h6>
         <ul class="list-unstyled">
-          <li class="mb-2"><a href="{% url 'home' %}" class="text-secondary text-decoration-none">Home</a></li>
-          <li class="nav-item">
-  <a class="nav-link {% if request.resolver_match.url_name == 'list' %}active{% endif %}" href="{% url 'treks:list' %}">Treks</a>
-</li>
-          <li class="mb-2"><a href="{% url 'about' %}" class="text-secondary text-decoration-none">About</a></li>
+          <li><a href="{% url 'treks:list' %}">Treks</a></li>
+          <li><a href="{% url 'treks:list' %}?category=tour">Tours</a></li>
+          {% if u_dest %}<li><a href="{{ u_dest }}">Destinations</a></li>{% endif %}
+          <li><a href="{% url 'treks:list' %}?category=climbing">Climbing</a></li>
         </ul>
       </div>
-      <div class="col-md-4">
-        <h5 class="fw-bold mb-3">Contact</h5>
-        <p class="text-secondary mb-1">📍 Thamel, Kathmandu, Nepal</p>
-        <p class="text-secondary mb-1">✉️ <a href="{% url 'contact:contact' %}" class="text-secondary text-decoration-none">info@adventurenepal.com</a></p>
-        <p class="text-secondary">📞 +977 9800000000</p>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6>Company</h6>
+        <ul class="list-unstyled">
+          <li><a href="{% url 'about' %}">About</a></li>
+          <li><a href="{% url 'guides:list' %}">Guides</a></li>
+          {% if u_blog %}<li><a href="{{ u_blog }}">Blog</a></li>{% endif %}
+          <li><a href="{% url 'contact:contact' %}">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6>Travel info</h6>
+        <ul class="list-unstyled">
+          {% if u_visa %}<li><a href="{{ u_visa }}">Visa</a></li>{% endif %}
+          {% if u_ins %}<li><a href="{{ u_ins }}">Insurance</a></li>{% endif %}
+          {% if u_pack %}<li><a href="{{ u_pack }}">Packing</a></li>{% endif %}
+          {% if u_safe %}<li><a href="{{ u_safe }}">Safety</a></li>{% endif %}
+          {% if u_faq %}<li><a href="{{ u_faq }}">FAQs</a></li>{% endif %}
+        </ul>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2">
+        <h6>Contact</h6>
+        <ul class="list-unstyled">
+          {% if site.address %}<li>{{ site.address }}</li>{% endif %}
+          {% if site.phone %}<li><a href="tel:{{ site.phone|cut:' ' }}">{{ site.phone }}</a></li>{% endif %}
+          {% if site.email %}<li><a href="mailto:{{ site.email }}">{{ site.email }}</a></li>{% endif %}
+          {% if WHATSAPP_NUMBER %}<li><a href="https://wa.me/{{ WHATSAPP_NUMBER }}" rel="noopener">WhatsApp</a></li>{% endif %}
+        </ul>
       </div>
     </div>
-    <hr class="border-secondary mt-4">
-    <p class="text-center text-secondary mb-0 small">&copy; {% now "Y" %} Adventure Nepal. All rights reserved.</p>
+
+    <div class="footer-bottom">
+      <span>&copy; {% now "Y" %} {{ site.site_name|default:"Adventure Nepal" }}</span>
+      <span class="footer-legal">
+        {% if u_priv %}<a href="{{ u_priv }}">Privacy policy</a>{% endif %}
+        {% if u_terms %}<a href="{{ u_terms }}">Terms &amp; conditions</a>{% endif %}
+        {% if u_ref %}<a href="{{ u_ref }}">Refund policy</a>{% endif %}
+        {% if u_cook %}<a href="{{ u_cook }}">Cookie policy</a>{% endif %}
+      </span>
+    </div>
   </div>
 </footer>
