@@ -1,143 +1,236 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Adventure Nepal — Trek the Himalayas{% endblock %}
+{% block meta_description %}Guided treks in Nepal: Everest, Annapurna, Langtang and more. Compare routes, prices and itineraries, then book online.{% endblock %}
+{% block body_class %}nav-overlay{% endblock %}
+
 {% block content %}
-<!-- Hero -->
-<!-- Hero with rotating background carousel -->
-<section class="hero-carousel d-flex align-items-center text-white text-center">
-  <div class="hero-slide active" style="background-image: url('{% static 'img/hero-bg.jpg' %}');"></div>
-  <div class="hero-slide" style="background-image: url('{% static 'img/everest.jpeg' %}');"></div>
-  <div class="hero-slide" style="background-image: url('{% static 'img/annapurna.jpg' %}');"></div>
+{% url 'core:custom_trip' as u_custom %}{% url 'blog:list' as u_blog %}{% url 'core:responsible_tourism' as u_resp %}
+
+<!-- 2. Hero -->
+<section class="hero-carousel text-white">
+  <div class="hero-slide active" style="background-image: url('{% static 'img/annapurna.jpg' %}');"></div>
+  <div class="hero-slide" style="background-image: url('{% static 'img/langtang.jpg' %}');"></div>
   <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <h1>Discover Nepal beyond the ordinary</h1>
+    <p class="lead">Explore the Himalayas through unforgettable treks, cultural journeys and authentic local experiences.</p>
+    <div class="hero-actions">
+      <a class="btn btn-accent btn-lg" href="{% url 'treks:list' %}">Explore treks</a>
+      <a class="btn btn-outline-light btn-lg" href="{% if u_custom %}{{ u_custom }}{% else %}{% url 'contact:contact' %}{% endif %}">Plan my trip</a>
+    </div>
+  </div>
+</section>
 
-
-  <div class="container" data-aos="fade-up">
-    <h1 class="fw-bold">Discover the Himalayas</h1>
-    <p class="lead mb-4 col-lg-7 mx-auto">Trek, explore, and connect with expert local guides across Nepal's most breathtaking trails.</p>
-
-    <form method="get" action="{% url 'treks:list' %}" class="hero-search-bar mx-auto mt-4">
-      <div class="row g-0">
-        <div class="col-md-5 d-flex align-items-center px-2">
-          <i class="bi bi-geo-alt-fill text-danger me-2"></i>
-          <input type="text" name="q" class="form-control border-0" placeholder="Where are you going?">
+<!-- 3. Trip search -->
+<section class="trip-search-wrap">
+  <div class="container">
+    <form class="trip-search" method="get" action="{% url 'treks:list' %}" role="search" aria-label="Find your adventure">
+      <div class="row g-3 align-items-end">
+        <div class="col-6 col-lg">
+          <label for="s-region" class="form-label">Destination</label>
+          <select id="s-region" name="region" class="form-select"><option value="">Anywhere</option>
+            {% for r in regions %}<option value="{{ r.slug }}">{{ r.name }}</option>{% endfor %}</select>
         </div>
-        <div class="col-md-4 d-flex align-items-center px-2">
-          <i class="bi bi-calendar3 text-secondary me-2"></i>
-          <select name="category" class="form-select border-0">
-            <option value="">Any Category</option>
-            <option value="trekking">Trekking</option>
-            <option value="tour">Tour</option>
-            <option value="sightseeing">Sightseeing</option>
-            <option value="climbing">Climbing</option>
-          </select>
+        <div class="col-6 col-lg">
+          <label for="s-cat" class="form-label">Trip type</label>
+          <select id="s-cat" name="category" class="form-select"><option value="">Any type</option>
+            {% for value, label in categories %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select>
         </div>
-        <div class="col-md-3">
-          <button type="submit" class="btn btn-primary w-100 h-100">
-            <i class="bi bi-search me-1"></i> Search
-          </button>
+        <div class="col-6 col-lg">
+          <label for="s-dur" class="form-label">Duration</label>
+          <select id="s-dur" name="duration" class="form-select"><option value="">Any length</option>
+            {% for value, label in durations %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select>
+        </div>
+        <div class="col-6 col-lg">
+          <label for="s-diff" class="form-label">Difficulty</label>
+          <select id="s-diff" name="difficulty" class="form-select"><option value="">Any level</option>
+            {% for value, label in difficulties %}<option value="{{ value }}">{{ label }}</option>{% endfor %}</select>
+        </div>
+        <div class="col-12 col-lg-auto">
+          <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search me-1" aria-hidden="true"></i> Find your adventure</button>
         </div>
       </div>
     </form>
   </div>
 </section>
 
-<!-- Stats strip -->
-<section class="stats-strip text-white">
+<!-- 4. Featured adventures -->
+<section id="adventures">
   <div class="container">
-    <div class="row text-center g-3">
-      <div class="col-6 col-md-3"><h3>500+</h3><small>Happy Trekkers</small></div>
-      <div class="col-6 col-md-3"><h3>25+</h3><small>Trek Routes</small></div>
-      <div class="col-6 col-md-3"><h3>40+</h3><small>Expert Guides</small></div>
-      <div class="col-6 col-md-3"><h3>10+</h3><small>Years Experience</small></div>
+    <div class="section-head">
+      <div><h2>Popular adventures</h2><p class="text-muted-custom mb-0">Trips our travelers ask about most.</p></div>
+      <a href="{% url 'treks:list' %}" class="btn btn-outline-primary btn-sm">View all trips</a>
+    </div>
+    <div class="row g-4">
+      {% for trek in featured_treks %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up">{% include "components/trek_card.html" %}</div>
+      {% empty %}
+        <div class="col-12"><div class="empty-state"><h3 class="h5">No featured trips yet</h3><p>Mark a trip as “featured” in the admin and it will appear here.</p></div></div>
+      {% endfor %}
     </div>
   </div>
 </section>
 
-<!-- Popular treks -->
-<section class="py-5" id="treks">
-  <div class="container">
-    <h2 class="text-center fw-bold mb-2" data-aos="fade-up">Popular Destinations</h2>
-    <p class="text-center text-secondary mb-4" data-aos="fade-up">Handpicked treks loved by our travelers</p>
-<div class="swiper heroSwiper" data-aos="fade-up">
-  <div class="swiper-wrapper">
-    {% for trek in featured_treks %}
-      <div class="swiper-slide">
-        <div class="trek-card">
-          <a href="{{ trek.get_absolute_url }}">
-            <img src="{{ trek.cover_image.url }}" alt="{{ trek.title }}">
-          </a>
-          <div class="trek-card-body">
-            <h5>{{ trek.title }}</h5>
-            <p class="text-secondary small mb-0">{{ trek.duration_days }} Days · {{ trek.get_difficulty_display }}</p>
-          </div>
-        </div>
-      </div>
-    {% empty %}
-      <p class="text-secondary">No featured treks yet — add some in the admin.</p>
-    {% endfor %}
-  </div>
-  <div class="swiper-pagination"></div>
-</div>
-  </div>
-</section>
-
-<!-- 3 Steps Process -->
- <section class="py-5">
-  <div class="container">
-    <h2 class="text-center fw-bold mb-2" data-aos="fade-up">Find Your Perfect Trip</h2>
-    <p class="text-center text-secondary mb-5" data-aos="fade-up">Three simple steps to your next Himalayan adventure</p>
-
-    <div class="row g-4 text-center">
-      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-        <div class="step-number mb-3">1</div>
-        <h5>Map Your Next Move</h5>
-        <p class="text-secondary">Browse our treks and tell us what you're looking for — breathtaking trails, cultural immersion, or a peaceful escape.</p>
-      </div>
-      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-        <div class="step-number mb-3">2</div>
-        <h5>Set Your Preferences</h5>
-        <p class="text-secondary">Choose your dates, group size, and comfort level — we'll match you with the right guide and itinerary.</p>
-      </div>
-      <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-        <div class="step-number mb-3">3</div>
-        <h5>Book Your Adventure</h5>
-        <p class="text-secondary">Confirm your trek and get ready — every step is paired with expert guidance and unforgettable moments.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Why choose us -->
+<!-- 5. Destinations -->
+{% if destinations %}
 <section class="bg-alt">
   <div class="container">
-    <span class="section-eyebrow text-center d-block">The Adventure Nepal difference</span>
-    <h2 class="text-center mb-5" data-aos="fade-up">Why Trek With Us</h2>
-    <div class="row g-4 text-center">
-      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-        <div class="icon-badge"><i class="bi bi-compass"></i></div>
-        <h5>Local Expert Guides</h5>
-        <p class="text-muted-custom">Certified guides who know every trail, culture, and hidden viewpoint.</p>
-      </div>
-      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-        <div class="icon-badge"><i class="bi bi-shield-check"></i></div>
-        <h5>Safety First</h5>
-        <p class="text-muted-custom">Full insurance coverage and emergency support on every trek.</p>
-      </div>
-      <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-        <div class="icon-badge"><i class="bi bi-tag"></i></div>
-        <h5>Fair Pricing</h5>
-        <p class="text-muted-custom">Transparent pricing with no hidden costs, ever.</p>
-      </div>
+    <div class="section-head"><div><h2>Explore Nepal</h2><p class="text-muted-custom mb-0">Pick a region and see what you can do there.</p></div></div>
+    <div class="row g-3">
+      {% for d in destinations %}
+        <div class="col-6 col-lg-4">
+          <a class="dest-card {% if not d.hero_image %}dest-fallback{% endif %}" href="{% url 'treks:list' %}?region={{ d.slug|urlencode }}"
+             {% if d.hero_image %}style="background-image:url('{{ d.hero_image.url }}')"{% endif %}>
+            <span class="dest-name">{{ d.name }}</span>
+            <span class="dest-count">{{ d.trek_count }} trip{{ d.trek_count|pluralize }}</span>
+          </a>
+        </div>
+      {% endfor %}
     </div>
   </div>
 </section>
+{% endif %}
 
-<!-- CTA -->
-<section class="py-5 cta-section text-white text-center">
-  <div class="container" data-aos="zoom-in">
-    <h2 class="fw-bold mb-3">Ready for Your Next Adventure?</h2>
-    <p class="mb-4">Join hundreds of trekkers exploring Nepal with us this season.</p>
-    <a href="#" class="btn btn-light btn-lg px-4">Book Your Trek</a>
+<!-- 6. Why choose us -->
+{% if why_items %}
+<section>
+  <div class="container">
+    <h2 class="mb-4">Why travel with us</h2>
+    <div class="row g-4">
+      {% for item in why_items %}
+        <div class="col-sm-6 col-lg-3">
+          <div class="icon-badge ms-0"><i class="bi {{ item.icon }}" aria-hidden="true"></i></div>
+          <h3 class="h5">{{ item.title }}</h3><p class="text-muted-custom">{{ item.text }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 7. Statistics -->
+{% if stats %}
+<section class="stats-strip">
+  <div class="container"><div class="row text-center g-3">
+    {% for s in stats %}<div class="col-6 col-md"><h3>{{ s.value }}</h3><small>{{ s.label }}</small></div>{% endfor %}
+  </div></div>
+</section>
+{% endif %}
+
+<!-- 8. Popular treks -->
+{% if popular_treks %}
+<section>
+  <div class="container">
+    <div class="section-head"><div><h2>More trips to consider</h2><p class="text-muted-custom mb-0">Highly rated and recently added.</p></div></div>
+    <div class="swiper heroSwiper"><div class="swiper-wrapper">
+      {% for trek in popular_treks %}<div class="swiper-slide h-auto">{% include "components/trek_card.html" %}</div>{% endfor %}
+    </div><div class="swiper-pagination"></div></div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 9. Custom trip CTA -->
+<section class="cta-band">
+  <div class="container">
+    <h2>Can't find the right trip?</h2>
+    <p>Tell us your dates, group size and interests and we'll build a route around them.</p>
+    <a class="btn btn-accent btn-lg" href="{% if u_custom %}{{ u_custom }}{% else %}{% url 'contact:contact' %}{% endif %}">Design my trip</a>
+  </div>
+</section>
+
+<!-- 10. Activities -->
+{% if activities %}
+<section>
+  <div class="container">
+    <h2 class="mb-4">Ways to explore</h2>
+    <div class="row g-3">
+      {% for a in activities %}
+        <div class="col-6 col-md-4 col-lg-3">
+          <a class="tile" href="{% url 'treks:list' %}?category={{ a.value }}">
+            <i class="bi {{ a.icon }}" aria-hidden="true"></i>
+            <span class="tile-title">{{ a.label }}</span><span class="tile-count">{{ a.count }} trip{{ a.count|pluralize }}</span>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 11. Testimonials -->
+{% if testimonials %}
+<section class="bg-alt">
+  <div class="container">
+    <h2 class="mb-4">What travelers say</h2>
+    <div class="swiper testimonialSwiper"><div class="swiper-wrapper">
+      {% for t in testimonials %}
+        <div class="swiper-slide h-auto"><figure class="quote-card">
+          {% include "components/rating_stars.html" with value=t.rating %}
+          <blockquote>{{ t.quote|truncatewords:38 }}</blockquote>
+          <figcaption><strong>{{ t.name }}</strong>{% if t.meta %}<span class="text-muted-custom"> — {{ t.meta }}</span>{% endif %}</figcaption>
+        </figure></div>
+      {% endfor %}
+    </div><div class="swiper-pagination"></div></div>
+  </div>
+</section>
+{% endif %}
+
+<!-- 12. Responsible tourism -->
+{% if responsible_items %}
+<section>
+  <div class="container"><div class="row g-5 align-items-start">
+    <div class="col-lg-4">
+      <h2>Travel with care</h2>
+      <p class="text-muted-custom">The mountains and the villages on the trail belong to the people who live there. A few habits make a real difference.</p>
+      {% if u_resp %}<a href="{{ u_resp }}" class="btn btn-outline-primary btn-sm">Read more</a>{% endif %}
+    </div>
+    <div class="col-lg-8"><div class="row g-4">
+      {% for item in responsible_items %}
+        <div class="col-sm-6 d-flex gap-3">
+          <i class="bi {{ item.icon }} resp-icon" aria-hidden="true"></i>
+          <div><h3 class="h6 mb-1">{{ item.title }}</h3><p class="text-muted-custom small mb-0">{{ item.text }}</p></div>
+        </div>
+      {% endfor %}
+    </div></div>
+  </div></div>
+</section>
+{% endif %}
+
+<!-- 13. Blog (filled in Phase 6) -->
+{% if blog_posts %}
+<section class="bg-alt"><div class="container">
+  <div class="section-head"><h2>From the travel blog</h2>{% if u_blog %}<a href="{{ u_blog }}" class="btn btn-outline-primary btn-sm">All articles</a>{% endif %}</div>
+  <div class="row g-4">{% for post in blog_posts %}
+    <div class="col-md-4"><a class="trek-card d-block text-decoration-none h-100" href="{{ post.get_absolute_url }}">
+      <div class="trek-card-body"><h3 class="h5">{{ post.title }}</h3><p class="text-muted-custom small mb-0">{{ post.excerpt|truncatechars:120 }}</p></div></a></div>
+  {% endfor %}</div>
+</div></section>
+{% endif %}
+
+<!-- 14. Newsletter -->
+<section id="newsletter" class="newsletter">
+  <div class="container"><div class="row g-4 align-items-center">
+    <div class="col-lg-6"><h2>Get trip ideas in your inbox</h2><p class="text-muted-custom mb-0">New routes, seasonal tips and travel advice. Unsubscribe any time.</p></div>
+    <div class="col-lg-6">
+      <form method="post" action="{% url 'core:newsletter' %}" class="d-flex flex-column flex-sm-row gap-2" data-once>
+        {% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}">
+        <input type="text" name="website" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label for="nl-email" class="visually-hidden">Email address</label>
+        <input type="email" id="nl-email" name="email" class="form-control" placeholder="you@example.com" required autocomplete="email">
+        <button type="submit" class="btn btn-primary flex-shrink-0">Subscribe</button>
+      </form>
+    </div>
+  </div></div>
+</section>
+
+<!-- 15. Final CTA -->
+<section class="cta-section text-center">
+  <div class="container">
+    <h2>Ready for your next adventure?</h2>
+    <p class="mb-4">Browse trips, compare itineraries and send a booking request in a few minutes.</p>
+    <a href="{% url 'treks:list' %}" class="btn btn-accent btn-lg">Browse trips</a>
+    <a href="{% url 'contact:contact' %}" class="btn btn-outline-light btn-lg ms-2">Ask a question</a>
   </div>
 </section>
 {% endblock %}

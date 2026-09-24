@@ -1,0 +1,10 @@
+[
+{"model":"core.highlightitem","pk":1,"fields":{"section":"why","icon":"bi-compass","title":"Local guides","text":"Every route is led by a guide from the region it crosses.","order":1,"is_active":true}},
+{"model":"core.highlightitem","pk":2,"fields":{"section":"why","icon":"bi-people","title":"Small groups","text":"Group sizes are listed on each trip page so you know what to expect.","order":2,"is_active":true}},
+{"model":"core.highlightitem","pk":3,"fields":{"section":"why","icon":"bi-tag","title":"Clear pricing","text":"Prices are per person in US dollars, shown on every trip page.","order":3,"is_active":true}},
+{"model":"core.highlightitem","pk":4,"fields":{"section":"why","icon":"bi-chat-dots","title":"Talk to a person","text":"Ask a question or design a custom trip and we reply directly.","order":4,"is_active":true}},
+{"model":"core.highlightitem","pk":5,"fields":{"section":"responsible","icon":"bi-recycle","title":"Leave no trace","text":"Carry out what you carry in, and use refill points where available.","order":1,"is_active":true}},
+{"model":"core.highlightitem","pk":6,"fields":{"section":"responsible","icon":"bi-houses","title":"Stay and eat locally","text":"Teahouses and village shops keep trekking income in the communities on the trail.","order":2,"is_active":true}},
+{"model":"core.highlightitem","pk":7,"fields":{"section":"responsible","icon":"bi-person-check","title":"Respect the people who carry","text":"Porter loads and working conditions matter. Edit this line to describe your own policy.","order":3,"is_active":true}},
+{"model":"core.highlightitem","pk":8,"fields":{"section":"responsible","icon":"bi-flower1","title":"Stay on the trail","text":"Keep to marked paths and follow park rules to protect fragile mountain ground.","order":4,"is_active":true}}
+]

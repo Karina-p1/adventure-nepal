@@ -1,0 +1,33 @@
+<article class="trek-card h-100 d-flex flex-column">
+  <a href="{{ trek.get_absolute_url }}" class="trek-card-media" tabindex="-1" aria-hidden="true">
+    <img src="{{ trek.cover_url }}" alt="" loading="lazy" width="800" height="520">
+    <span class="badge bg-secondary">{{ trek.get_category_display }}</span>
+  </a>
+  <div class="trek-card-body d-flex flex-column flex-grow-1">
+    {% if trek.region %}<p class="trek-region mb-1">{{ trek.region.name }}</p>{% endif %}
+    <h3 class="h5"><a href="{{ trek.get_absolute_url }}" class="stretched-link-off">{{ trek.title }}</a></h3>
+    <p class="text-muted-custom small mb-2">{{ trek.short_description|truncatechars:110 }}</p>
+    <ul class="trek-facts list-unstyled">
+      <li><i class="bi bi-calendar3" aria-hidden="true"></i> {{ trek.duration_days }} days</li>
+      <li><i class="bi bi-graph-up-arrow" aria-hidden="true"></i> {{ trek.get_difficulty_display }}</li>
+      <li><i class="bi bi-triangle" aria-hidden="true"></i> {{ trek.max_altitude_m }} m</li>
+    </ul>
+    <div class="trek-card-foot mt-auto">
+      <div class="trek-rating">
+        {% if trek.average_rating %}
+          {% include "components/rating_stars.html" with value=trek.average_rating %}
+          <small class="text-muted-custom">{{ trek.average_rating }} ({{ trek.review_count }})</small>
+        {% else %}<small class="text-muted-custom">No reviews yet</small>{% endif %}
+      </div>
+      <div class="trek-price">
+        <small class="text-muted-custom">From</small>
+        {% if trek.has_discount %}<s class="text-muted-custom small">${{ trek.price_usd|floatformat:0 }}</s>{% endif %}
+        <strong>${{ trek.display_price|floatformat:0 }}</strong>
+      </div>
+    </div>
+    <div class="d-flex gap-2 mt-3">
+      <a href="{{ trek.get_absolute_url }}" class="btn btn-outline-primary btn-sm flex-fill">View details</a>
+      <a href="{% url 'bookings:create' trek.slug %}" class="btn btn-primary btn-sm flex-fill">Book now</a>
+    </div>
+  </div>
+</article>

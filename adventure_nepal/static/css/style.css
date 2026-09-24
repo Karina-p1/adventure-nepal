@@ -141,3 +141,65 @@ body.nav-overlay .site-nav:not(.scrolled):not(.menu-open) .nav-link.active { col
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* ==========================================================
+   Phase 2: homepage
+   ========================================================== */
+.hero-carousel { padding-bottom: 110px; align-items: flex-end; }
+.hero-content { padding-bottom: 1rem; }
+.hero-content h1 { max-width: 14ch; }
+.hero-content p { margin-inline: 0; max-width: 52ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
+
+.trip-search-wrap { padding-block: 0; }
+.trip-search { background: #fff; border: 1px solid var(--line); border-radius: 20px; box-shadow: var(--shadow-lg); padding: 1.25rem; margin-top: -56px; position: relative; z-index: 3; }
+.trip-search .form-label { font-size: .85rem; font-weight: 600; margin-bottom: .25rem; color: var(--text-muted); }
+
+.section-head { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: end; margin-bottom: 2rem; }
+.empty-state { border: 1px dashed #C9C5B4; border-radius: var(--radius); padding: 2rem; text-align: center; color: var(--text-muted); }
+.empty-state p { margin-inline: auto; }
+
+/* Trek card */
+.trek-card-media { position: relative; display: block; overflow: hidden; }
+.trek-card-media .badge { position: absolute; top: 12px; left: 12px; }
+.trek-card h3 a { color: var(--dark); text-decoration: none; }
+.trek-card h3 a:hover { color: var(--primary); }
+.trek-region { font-size: .85rem; font-weight: 600; color: var(--secondary); }
+.trek-facts { display: flex; flex-wrap: wrap; gap: .25rem 1rem; font-size: .88rem; color: var(--text-muted); margin-bottom: 1rem; }
+.trek-facts i { color: var(--primary); margin-right: .25rem; }
+.trek-card-foot { display: flex; justify-content: space-between; align-items: end; gap: .5rem; border-top: 1px solid var(--line); padding-top: .85rem; }
+.trek-price strong { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--primary); margin-left: .15rem; }
+.trek-rating { display: flex; flex-direction: column; }
+
+/* Star rating (fractional, no images) */
+.stars { --pct: calc(var(--rating) / 5 * 100%); display: inline-block; font-size: 1.05rem; letter-spacing: 2px; line-height: 1;
+  background: linear-gradient(90deg, var(--accent) var(--pct), #D9D6C9 var(--pct)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.stars::before { content: "★★★★★"; }
+
+/* Destinations */
+.dest-card { position: relative; display: flex; flex-direction: column; justify-content: end; min-height: 240px; border-radius: var(--radius); padding: 1.25rem; color: #fff; text-decoration: none; overflow: hidden;
+  background: center / cover no-repeat var(--primary); }
+.dest-card::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 35%, rgba(20,34,27,.82)); }
+.dest-fallback { background: var(--primary); }
+.dest-card > * { position: relative; }
+.dest-name { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 700; }
+.dest-count { font-size: .9rem; opacity: .85; }
+.dest-card:hover { color: #fff; box-shadow: var(--shadow-lg); }
+
+/* Activities */
+.tile { display: flex; flex-direction: column; gap: .25rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; color: var(--dark); text-decoration: none; height: 100%; transition: border-color .2s, box-shadow .2s; }
+.tile:hover { border-color: var(--primary); box-shadow: var(--shadow-md); color: var(--dark); }
+.tile i { font-size: 1.6rem; color: var(--primary); }
+.tile-title { font-weight: 600; }
+.tile-count { font-size: .85rem; color: var(--text-muted); }
+
+/* Custom trip band, testimonials, responsible, newsletter */
+.cta-band { background: var(--dark); color: #fff; }
+.cta-band h2 { color: #fff; }
+.cta-band p { color: rgba(255,255,255,.8); margin-bottom: 1.5rem; }
+.quote-card { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.5rem; height: 100%; margin: 0; }
+.quote-card blockquote { margin: .75rem 0 1rem; font-size: 1.05rem; }
+.resp-icon { font-size: 1.5rem; color: var(--secondary); line-height: 1.2; }
+.newsletter { background: var(--bg-alt); }
+.icon-badge.ms-0 { margin-left: 0; margin-right: 0; }
+.btn-outline-light:hover { color: var(--dark); }

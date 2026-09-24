@@ -9,7 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
       spaceBetween: 24,
       loop: true,
       autoplay: reduceMotion ? false : { delay: 4000, disableOnInteraction: false },
-      pagination: { el: ".swiper-pagination", clickable: true },
+      pagination: { el: ".heroSwiper .swiper-pagination", clickable: true },
+      breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } },
+    });
+  }
+
+  if (window.Swiper && document.querySelector(".testimonialSwiper")) {
+    new Swiper(".testimonialSwiper", {
+      slidesPerView: 1,
+      spaceBetween: 20,
+      pagination: { el: ".testimonialSwiper .swiper-pagination", clickable: true },
       breakpoints: { 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } },
     });
   }

@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -36,3 +37,75 @@ class SiteSettings(models.Model):
             obj, _ = cls.objects.get_or_create(pk=1)
             cache.set("site_settings", obj, 300)
         return obj
+
+
+class SiteStatistic(models.Model):
+    """Trust numbers shown on the homepage. Enter only figures you can back up."""
+
+    label = models.CharField(max_length=80, help_text="e.g. Years of experience")
+    value = models.CharField(max_length=20, help_text="e.g. 12 or 1,500+")
+    order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return f"{self.value} {self.label}"
+
+
+class HighlightItem(models.Model):
+    """Editable icon + text blocks for 'Why choose us' and 'Responsible tourism'."""
+
+    class Section(models.TextChoices):
+        WHY = "why", "Why choose us"
+        RESPONSIBLE = "responsible", "Responsible tourism"
+
+    section = models.CharField(max_length=20, choices=Section.choices)
+    icon = models.CharField(max_length=40, default="bi-compass", help_text="Bootstrap Icons class, e.g. bi-compass")
+    title = models.CharField(max_length=100)
+    text = models.CharField(max_length=300)
+    order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["section", "order", "id"]
+
+    def __str__(self):
+        return f"{self.get_section_display()}: {self.title}"
+
+
+class Testimonial(models.Model):
+    """Editorial quote (for feedback not tied to a booking review)."""
+
+    name = models.CharField(max_length=100)
+    country = models.CharField(max_length=80, blank=True)
+    photo = models.ImageField(upload_to="testimonials/", blank=True, null=True)
+    quote = models.TextField()
+    rating = models.PositiveSmallIntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    trek = models.ForeignKey("treks.Trek", on_delete=models.SET_NULL, null=True, blank=True, related_name="testimonials")
+    order = models.PositiveSmallIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["order", "-created_at"]
+
+    def __str__(self):
+        return f"{self.name} ({self.country})" if self.country else self.name
+
+
+class NewsletterSubscriber(models.Model):
+    email = models.EmailField(unique=True)
+    is_active = models.BooleanField(default=True)
+    subscribed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-subscribed_at"]
+
+    def save(self, *args, **kwargs):
+        self.email = self.email.strip().lower()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.email
