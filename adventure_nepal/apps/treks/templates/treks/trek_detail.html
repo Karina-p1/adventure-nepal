@@ -1,42 +1,89 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}{{ trek.title }} — Adventure Nepal{% endblock %}
+{% block meta_description %}{{ trek.meta_description|default:trek.short_description|truncatechars:155 }}{% endblock %}
+{% block og_title %}{{ trek.title }}{% endblock %}
+{% block og_description %}{{ trek.short_description }}{% endblock %}
+{% block og_image %}{{ trek.cover_url }}{% endblock %}
 
 {% block content %}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <div class="container">
+    <ol>
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'treks:list' %}">Treks</a></li>
+      {% if trek.region %}<li><a href="{% url 'treks:list' %}?region={{ trek.region.slug|urlencode }}">{{ trek.region.name }}</a></li>{% endif %}
+      <li aria-current="page">{{ trek.title }}</li>
+    </ol>
+  </div>
+</nav>
+
+<section class="trek-hero" style="background-image:url('{{ trek.cover_url }}')">
+  <div class="trek-hero-overlay"></div>
+  <div class="container trek-hero-content">
+    <span class="badge bg-secondary mb-2">{{ trek.get_category_display }}</span>
+    <h1>{{ trek.title }}</h1>
+    {% if trek.region %}<p class="lead mb-2"><i class="bi bi-geo-alt" aria-hidden="true"></i> {{ trek.region.name }}</p>{% endif %}
+    <ul class="trek-hero-facts list-unstyled">
+      <li><i class="bi bi-calendar3" aria-hidden="true"></i> {{ trek.duration_days }} days</li>
+      <li><i class="bi bi-graph-up-arrow" aria-hidden="true"></i> {{ trek.get_difficulty_display }}</li>
+      <li><i class="bi bi-triangle" aria-hidden="true"></i> {{ trek.max_altitude_m }} m max</li>
+      {% if trek.average_rating %}<li>{% include "components/rating_stars.html" with value=trek.average_rating %} {{ trek.average_rating }} ({{ trek.review_count }})</li>{% endif %}
+    </ul>
+  </div>
+</section>
+
 <section class="py-5">
   <div class="container">
     <div class="row g-5">
-      <div class="col-lg-8" data-aos="fade-up">
-        <img src="{{ trek.cover_image.url }}" class="img-fluid rounded mb-4" alt="{{ trek.title }}">
-        <h1 class="fw-bold">{{ trek.title }}</h1>
-        <p class="text-secondary">{{ trek.short_description }}</p>
+      <div class="col-lg-8">
 
-        <div class="d-flex gap-4 my-3 flex-wrap">
-          <span>📅 {{ trek.duration_days }} Days</span>
-          <span>⛰️ {{ trek.max_altitude_m }}m</span>
-          <span>💪 {{ trek.get_difficulty_display }}</span>
-          <span>👥 {{ trek.group_size_min }}–{{ trek.group_size_max }} people</span>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          <a href="{% url 'bookings:create' trek.slug %}" class="btn btn-primary">Book this trek</a>
+          <a href="{% url 'contact:contact' %}?trek={{ trek.slug }}&subject=Question about {{ trek.title|urlencode }}" class="btn btn-outline-primary">Ask a question</a>
         </div>
 
-        <h3 class="mt-5 mb-3">Overview</h3>
-        <p>{{ trek.description|linebreaks }}</p>
+        <h2>Overview</h2>
+        <div class="prose">{{ trek.description|linebreaks }}</div>
+
+        {% if trek.highlights.all %}
+          <h2 class="mt-5">Highlights</h2>
+          <ul class="checklist">
+            {% for h in trek.highlights.all %}<li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> {{ h.text }}</li>{% endfor %}
+          </ul>
+        {% endif %}
+
+        <h2 class="mt-5">Quick facts</h2>
+        <div class="quick-facts row row-cols-2 row-cols-md-3 g-3">
+          <div><span class="qf-label">Duration</span><span class="qf-value">{{ trek.duration_days }} days</span></div>
+          <div><span class="qf-label">Difficulty</span><span class="qf-value">{{ trek.get_difficulty_display }}</span></div>
+          <div><span class="qf-label">Max altitude</span><span class="qf-value">{{ trek.max_altitude_m }} m</span></div>
+          <div><span class="qf-label">Group size</span><span class="qf-value">{{ trek.group_size_min }}–{{ trek.group_size_max }}</span></div>
+          {% if trek.seasons_display %}<div><span class="qf-label">Best seasons</span><span class="qf-value">{{ trek.seasons_display|join:", " }}</span></div>
+          {% elif trek.best_season %}<div><span class="qf-label">Best season</span><span class="qf-value">{{ trek.best_season }}</span></div>{% endif %}
+          {% if trek.accommodation_summary %}<div><span class="qf-label">Accommodation</span><span class="qf-value">{{ trek.accommodation_summary }}</span></div>{% endif %}
+        </div>
 
         {% if trek.itinerary_days.all %}
-          <h3 class="mt-5 mb-3">Itinerary</h3>
+          <h2 class="mt-5">Detailed itinerary</h2>
           <div class="accordion" id="itineraryAccordion">
             {% for day in trek.itinerary_days.all %}
               <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button"
-                          data-bs-toggle="collapse" data-bs-target="#day{{ day.day_number }}">
+                <h3 class="accordion-header">
+                  <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#day{{ day.day_number }}" aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
                     Day {{ day.day_number }}: {{ day.title }}
                   </button>
-                </h2>
-                <div id="day{{ day.day_number }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
-                     data-bs-parent="#itineraryAccordion">
+                </h3>
+                <div id="day{{ day.day_number }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#itineraryAccordion">
                   <div class="accordion-body">
-                    {{ day.description }}
-                    {% if day.altitude_m %}<p class="text-secondary small mb-0">Altitude: {{ day.altitude_m }}m</p>{% endif %}
+                    <p>{{ day.description }}</p>
+                    <ul class="day-meta list-unstyled">
+                      {% if day.altitude_m %}<li><i class="bi bi-triangle" aria-hidden="true"></i> {{ day.altitude_m }} m</li>{% endif %}
+                      {% if day.distance_km %}<li><i class="bi bi-signpost-2" aria-hidden="true"></i> {{ day.distance_km }} km</li>{% endif %}
+                      {% if day.walking_hours %}<li><i class="bi bi-clock" aria-hidden="true"></i> {{ day.walking_hours }} hrs walking</li>{% endif %}
+                      {% if day.meals %}<li><i class="bi bi-egg-fried" aria-hidden="true"></i> {{ day.meals }}</li>{% endif %}
+                      {% if day.accommodation %}<li><i class="bi bi-house" aria-hidden="true"></i> {{ day.accommodation }}</li>{% endif %}
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -44,61 +91,94 @@
           </div>
         {% endif %}
 
+        {% if included or excluded %}
+          <h2 class="mt-5">What's included</h2>
+          <div class="row g-4">
+            <div class="col-md-6">
+              <ul class="checklist">{% for i in included %}<li><i class="bi bi-check-circle-fill text-success" aria-hidden="true"></i> {{ i.text }}</li>{% endfor %}</ul>
+            </div>
+            <div class="col-md-6">
+              {% if excluded %}<h3 class="h6">Not included</h3>
+              <ul class="checklist">{% for i in excluded %}<li><i class="bi bi-x-circle text-muted-custom" aria-hidden="true"></i> {{ i.text }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+          </div>
+        {% endif %}
+
         {% if trek.gallery_images.all %}
-          <h3 class="mt-5 mb-3">Gallery</h3>
+          <h2 class="mt-5">Gallery</h2>
           <div class="row g-2">
             {% for img in trek.gallery_images.all %}
-              <div class="col-4">
-                <img src="{{ img.image.url }}" class="img-fluid rounded" alt="{{ img.caption }}">
+              <div class="col-4"><img src="{{ img.image.url }}" class="img-fluid rounded gallery-thumb" alt="{{ img.caption|default:trek.title }}" loading="lazy"></div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% if trek.faqs.all %}
+          <h2 class="mt-5">Trip FAQs</h2>
+          <div class="accordion" id="faqAccordion">
+            {% for faq in trek.faqs.all %}
+              <div class="accordion-item">
+                <h3 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ faq.pk }}" aria-expanded="false">{{ faq.question }}</button>
+                </h3>
+                <div id="faq{{ faq.pk }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                  <div class="accordion-body">{{ faq.answer|linebreaks }}</div>
+                </div>
               </div>
             {% endfor %}
           </div>
         {% endif %}
 
-        <h3 class="mt-5 mb-3">
+        <h2 class="mt-5">
           Reviews
-          {% if trek.average_rating %}
-            <span class="fs-6 text-secondary">({{ trek.average_rating }}★ · {{ trek.review_count }} review{{ trek.review_count|pluralize }})</span>
-          {% endif %}
-        </h3>
-
-        {% for review in trek.reviews.all %}
-          {% if review.is_approved %}
-            <div class="border-bottom pb-3 mb-3">
-              <div class="d-flex justify-content-between">
-                <strong>{{ review.customer.get_full_name|default:review.customer.username }}</strong>
-                <span class="text-warning">{{ review.rating }}★</span>
-              </div>
-              {% if review.title %}<p class="fw-bold mb-1">{{ review.title }}</p>{% endif %}
-              <p class="text-secondary mb-0">{{ review.comment|linebreaks }}</p>
-              <p class="text-secondary small mb-0">{{ review.created_at|date:"M Y" }}</p>
+          {% if trek.average_rating %}<span class="fs-6 fw-normal text-muted-custom">({{ trek.average_rating }}★ · {{ trek.review_count }} review{{ trek.review_count|pluralize }})</span>{% endif %}
+        </h2>
+        {% for review in trek.approved_reviews %}
+          <div class="review-row">
+            <div class="d-flex justify-content-between align-items-start">
+              <strong>{{ review.customer.first_name|default:review.customer.username }}{% if review.customer.last_name %} {{ review.customer.last_name|first }}.{% endif %}</strong>
+              {% include "components/rating_stars.html" with value=review.rating %}
             </div>
-          {% endif %}
+            {% if review.title %}<p class="fw-semibold mb-1">{{ review.title }}</p>{% endif %}
+            <div class="text-muted-custom">{{ review.comment|linebreaks }}</div>
+            <p class="text-muted-custom small mb-0">{{ review.created_at|date:"M Y" }}</p>
+          </div>
         {% empty %}
-          <p class="text-secondary">No reviews yet — be the first to share your experience.</p>
+          <p class="text-muted-custom">No reviews yet — be the first to share your experience.</p>
         {% endfor %}
 
-        {% if user.is_authenticated %}
-          <a href="{% url 'reviews:add' trek.slug %}" class="btn btn-outline-primary mt-2">Write a Review</a>
+        {% if can_review %}
+          <a href="{% url 'reviews:add' trek.slug %}" class="btn btn-outline-primary mt-2">Write a review</a>
+        {% elif user.is_authenticated %}
+          <p class="text-muted-custom small mt-2">You can write a review after completing this trek with us.</p>
+        {% endif %}
+
+        {% if related_treks %}
+          <h2 class="mt-5">You might also like</h2>
+          <div class="row g-4">
+            {% for t in related_treks %}<div class="col-md-4"><div class="trek-card h-100">{% include "components/trek_card.html" with trek=t %}</div></div>{% endfor %}
+          </div>
         {% endif %}
       </div>
 
-      <div class="col-lg-4" data-aos="fade-up">
-        <div class="border rounded p-4 sticky-top" style="top: 90px;">
-          <h3 class="fw-bold mb-3">
-            {% if trek.has_discount %}
-              <span class="text-decoration-line-through text-secondary fs-6">${{ trek.price_usd }}</span><br>
-            {% endif %}
-            ${{ trek.display_price }} <span class="fs-6 text-secondary">/ person</span>
-          </h3>
-          {% if trek.guide %}
-            <p class="text-secondary small">Guided by {{ trek.guide.get_full_name|default:trek.guide.username }}</p>
+      <div class="col-lg-4">
+        <div class="booking-panel">
+          <div class="booking-price">
+            {% if trek.has_discount %}<s class="text-muted-custom">${{ trek.price_usd|floatformat:0 }}</s>{% endif %}
+            <strong>${{ trek.display_price|floatformat:0 }}</strong><span class="text-muted-custom"> / person</span>
+          </div>
+          {% if trek.guides.all %}
+            <p class="text-muted-custom small mb-3">
+              Guided by
+              {% for g in trek.guides.all %}<a href="{% url 'guides:detail' g.pk %}">{{ g.get_full_name|default:g.username }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+            </p>
           {% endif %}
           {% if user.is_authenticated %}
-            <a href="{% url 'bookings:create' trek.slug %}" class="btn btn-primary w-100 mt-2">Book Now</a>
+            <a href="{% url 'bookings:create' trek.slug %}" class="btn btn-primary w-100">Book this trek</a>
           {% else %}
-            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary w-100 mt-2">Login to Book</a>
+            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary w-100">Log in to book</a>
           {% endif %}
+          <a href="{% url 'contact:contact' %}?trek={{ trek.slug }}" class="btn btn-outline-primary w-100 mt-2">Customize this trip</a>
         </div>
       </div>
     </div>

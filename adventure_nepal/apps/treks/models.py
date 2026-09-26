@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg, Count, Q
 from django.templatetags.static import static
@@ -60,7 +61,7 @@ class TrekQuerySet(models.QuerySet):
         approved = Q(reviews__is_approved=True)
         return self.annotate(
             avg_rating=Avg("reviews__rating", filter=approved),
-            approved_review_count=Count("reviews", filter=approved),
+            approved_review_count=Count("reviews", filter=approved, distinct=True),
         )
 
 
@@ -86,9 +87,15 @@ class Trek(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=220, unique=True, blank=True)
     region = models.ForeignKey(TrekRegion, on_delete=models.SET_NULL, null=True, related_name="treks")
+
+    # Legacy single-guide field. Kept (nullable, unused in new templates) so no destructive
+    # migration is needed this phase. `guides` below is the many-guides relation going forward.
     guide = models.ForeignKey(
         CustomUser, on_delete=models.SET_NULL, null=True, blank=True,
         limit_choices_to={"role": CustomUser.Role.GUIDE}, related_name="treks_guided"
+    )
+    guides = models.ManyToManyField(
+        CustomUser, blank=True, limit_choices_to={"role": CustomUser.Role.GUIDE}, related_name="guided_treks"
     )
 
     short_description = models.CharField(max_length=300)
@@ -101,9 +108,16 @@ class Trek(models.Model):
     group_size_min = models.PositiveIntegerField(default=2)
     group_size_max = models.PositiveIntegerField(default=12)
     best_season = models.CharField(max_length=200, blank=True, help_text="e.g. Mar-May, Sep-Nov")
+    season_spring = models.BooleanField(default=False)
+    season_summer = models.BooleanField(default=False)
+    season_autumn = models.BooleanField(default=False)
+    season_winter = models.BooleanField(default=False)
 
     price_usd = models.DecimalField(max_digits=10, decimal_places=2)
     discount_price_usd = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+
+    accommodation_summary = models.CharField(max_length=200, blank=True, help_text="e.g. Teahouses / lodges")
+    altitude_sickness_risk = models.CharField(max_length=200, blank=True)
 
     cover_image = models.ImageField(upload_to="treks/covers/")
     is_featured = models.BooleanField(default=False)
@@ -117,9 +131,23 @@ class Trek(models.Model):
 
     class Meta:
         ordering = ["-is_featured", "title"]
+        constraints = [
+            models.CheckConstraint(
+                check=Q(discount_price_usd__isnull=True) | Q(discount_price_usd__lt=models.F("price_usd")),
+                name="trek_discount_lower_than_price",
+            ),
+            models.CheckConstraint(check=Q(group_size_min__lte=models.F("group_size_max")), name="trek_min_le_max_group"),
+            models.CheckConstraint(check=Q(duration_days__gt=0), name="trek_duration_positive"),
+        ]
 
     def __str__(self):
         return self.title
+
+    def clean(self):
+        if self.discount_price_usd is not None and self.price_usd is not None and self.discount_price_usd >= self.price_usd:
+            raise ValidationError({"discount_price_usd": "Discount price must be lower than the regular price."})
+        if self.group_size_min > self.group_size_max:
+            raise ValidationError({"group_size_min": "Minimum group size can't be greater than the maximum."})
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -139,22 +167,24 @@ class Trek(models.Model):
 
     @property
     def display_price(self):
-        # Fixed: previously a discount HIGHER than the price was charged.
         return self.discount_price_usd if self.has_discount else self.price_usd
 
     @property
     def average_rating(self):
-        if hasattr(self, "avg_rating"):
-            value = self.avg_rating
-        else:
-            value = self.reviews.filter(is_approved=True).aggregate(a=Avg("rating"))["a"]
+        value = self.avg_rating if hasattr(self, "avg_rating") else self.reviews.filter(is_approved=True).aggregate(a=Avg("rating"))["a"]
         return round(value, 1) if value is not None else None
 
     @property
     def review_count(self):
-        if hasattr(self, "approved_review_count"):
-            return self.approved_review_count
-        return self.reviews.filter(is_approved=True).count()
+        return self.approved_review_count if hasattr(self, "approved_review_count") else self.reviews.filter(is_approved=True).count()
+
+    @property
+    def seasons_display(self):
+        labels = []
+        for flag, label in [("season_spring", "Spring"), ("season_summer", "Summer"), ("season_autumn", "Autumn"), ("season_winter", "Winter")]:
+            if getattr(self, flag):
+                labels.append(label)
+        return labels
 
 
 class TrekItineraryDay(models.Model):
@@ -164,6 +194,9 @@ class TrekItineraryDay(models.Model):
     description = models.TextField()
     altitude_m = models.PositiveIntegerField(blank=True, null=True)
     distance_km = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
+    walking_hours = models.DecimalField(max_digits=4, decimal_places=1, blank=True, null=True)
+    meals = models.CharField(max_length=100, blank=True, help_text="e.g. Breakfast, Lunch, Dinner")
+    accommodation = models.CharField(max_length=100, blank=True, help_text="e.g. Teahouse, Hotel, Camping")
 
     class Meta:
         ordering = ["day_number"]
@@ -184,3 +217,43 @@ class TrekImage(models.Model):
 
     def __str__(self):
         return f"{self.trek.title} image {self.order}"
+
+
+class TripHighlight(models.Model):
+    trek = models.ForeignKey(Trek, on_delete=models.CASCADE, related_name="highlights")
+    text = models.CharField(max_length=200)
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return f"{self.trek.title}: {self.text[:40]}"
+
+
+class TripInclusion(models.Model):
+    trek = models.ForeignKey(Trek, on_delete=models.CASCADE, related_name="inclusions")
+    text = models.CharField(max_length=200)
+    is_included = models.BooleanField(default=True, help_text="Unchecked = shown under 'What's not included'")
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return f"{'Included' if self.is_included else 'Not included'}: {self.text[:40]}"
+
+
+class TripFAQ(models.Model):
+    trek = models.ForeignKey(Trek, on_delete=models.CASCADE, related_name="faqs")
+    question = models.CharField(max_length=200)
+    answer = models.TextField()
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ["order", "id"]
+        verbose_name = "FAQ"
+        verbose_name_plural = "FAQs"
+
+    def __str__(self):
+        return self.question

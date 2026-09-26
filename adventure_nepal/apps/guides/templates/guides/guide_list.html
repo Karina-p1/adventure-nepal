@@ -3,11 +3,9 @@
 {% block title %}Our Guides — Adventure Nepal{% endblock %}
 
 {% block content %}
+<section class="page-head"><div class="container"><h1>Meet our guides</h1><p class="text-muted-custom mb-0">Local guides who lead our treks and tours.</p></div></section>
 <section class="py-5">
   <div class="container">
-    <h1 class="fw-bold mb-2" data-aos="fade-up">Meet Our Guides</h1>
-    <p class="text-secondary mb-4" data-aos="fade-up">Certified local experts who lead every trek</p>
-
     <div class="row g-4">
       {% for guide in guides %}
         <div class="col-md-4" data-aos="fade-up">
@@ -19,16 +17,16 @@
                 {{ guide.first_name|first|default:guide.username|first }}
               </div>
             {% endif %}
-            <h5>{{ guide.get_full_name|default:guide.username }}</h5>
+            <h2 class="h5">{{ guide.get_full_name|default:guide.username }}</h2>
             {% if guide.guide_profile %}
-              <p class="text-secondary small mb-2">{{ guide.guide_profile.experience_years }} years experience</p>
-              <p class="text-secondary small">{{ guide.guide_profile.specialization|default:"General trekking" }}</p>
+              <p class="text-muted-custom small mb-2">{{ guide.guide_profile.experience_years }} years experience</p>
+              <p class="text-muted-custom small">{{ guide.guide_profile.specialization|default:"General trekking" }}</p>
             {% endif %}
-            <a href="{% url 'guides:detail' guide.pk %}" class="btn btn-outline-primary btn-sm mt-2">View Profile</a>
+            <a href="{% url 'guides:detail' guide.pk %}" class="btn btn-outline-primary btn-sm mt-2">View profile</a>
           </div>
         </div>
       {% empty %}
-        <p class="text-secondary">No guides listed yet.</p>
+        <div class="col-12"><div class="empty-state"><p class="mb-0">No guides listed yet.</p></div></div>
       {% endfor %}
     </div>
   </div>

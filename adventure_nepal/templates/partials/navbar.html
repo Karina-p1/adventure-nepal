@@ -4,7 +4,11 @@
 <nav class="navbar navbar-expand-lg site-nav" id="mainNavbar" aria-label="Main navigation">
   <div class="container">
     <a class="navbar-brand" href="{% url 'home' %}">
-      <span aria-hidden="true">🏔️</span> {{ site.site_name|default:"Adventure Nepal" }}
+      <svg class="brand-mark" width="26" height="26" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <path d="M2 25 L11 9.5 L15.5 17 L21 7.5 L30 25 Z" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="22.5" cy="6" r="2.1" fill="currentColor"/>
+      </svg>
+      <span>{{ site.site_name|default:"Adventure Nepal" }}</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
             aria-controls="mainNav" aria-expanded="false" aria-label="Toggle menu">

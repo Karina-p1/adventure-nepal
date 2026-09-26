@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Trek, TrekImage, TrekItineraryDay, TrekRegion
+from .models import Trek, TrekImage, TrekItineraryDay, TrekRegion, TripFAQ, TripHighlight, TripInclusion
 
 
 @admin.register(TrekRegion)
@@ -27,6 +27,21 @@ class TrekImageInline(admin.TabularInline):
     extra = 1
 
 
+class TripHighlightInline(admin.TabularInline):
+    model = TripHighlight
+    extra = 1
+
+
+class TripInclusionInline(admin.TabularInline):
+    model = TripInclusion
+    extra = 1
+
+
+class TripFAQInline(admin.TabularInline):
+    model = TripFAQ
+    extra = 1
+
+
 @admin.register(Trek)
 class TrekAdmin(admin.ModelAdmin):
     list_display = ("title", "category", "region", "difficulty", "duration_days", "price_usd", "is_featured", "is_popular", "is_active")
@@ -34,11 +49,16 @@ class TrekAdmin(admin.ModelAdmin):
     list_select_related = ("region",)
     search_fields = ("title", "short_description", "region__name")
     prepopulated_fields = {"slug": ("title",)}
-    inlines = [TrekItineraryDayInline, TrekImageInline]
+    filter_horizontal = ("guides",)
+    inlines = [TripHighlightInline, TrekItineraryDayInline, TripInclusionInline, TripFAQInline, TrekImageInline]
     fieldsets = (
-        (None, {"fields": ("title", "slug", "category", "region", "guide", "is_active")}),
+        (None, {"fields": ("title", "slug", "category", "region", "guides", "is_active")}),
         ("Content", {"fields": ("short_description", "description", "meta_description", "cover_image")}),
-        ("Trip facts", {"fields": ("duration_days", "max_altitude_m", "difficulty", "group_size_min", "group_size_max", "best_season")}),
+        ("Trip facts", {"fields": (
+            "duration_days", "max_altitude_m", "difficulty", "group_size_min", "group_size_max",
+            "best_season", ("season_spring", "season_summer", "season_autumn", "season_winter"),
+            "accommodation_summary", "altitude_sickness_risk",
+        )}),
         ("Pricing", {"fields": ("price_usd", "discount_price_usd")}),
         ("Homepage", {"fields": ("is_featured", "is_popular")}),
     )

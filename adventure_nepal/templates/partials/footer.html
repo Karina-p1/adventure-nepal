@@ -5,7 +5,13 @@
   <div class="container">
     <div class="row gy-5">
       <div class="col-lg-4">
-        <h5 class="footer-brand">{{ site.site_name|default:"Adventure Nepal" }}</h5>
+        <h5 class="footer-brand">
+          <svg width="24" height="24" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+            <path d="M2 25 L11 9.5 L15.5 17 L21 7.5 L30 25 Z" fill="none" stroke="#E3A22B" stroke-width="2.3" stroke-linejoin="round" stroke-linecap="round"/>
+            <circle cx="22.5" cy="6" r="2.1" fill="#E3A22B"/>
+          </svg>
+          {{ site.site_name|default:"Adventure Nepal" }}
+        </h5>
         <p>{{ site.tagline }}</p>
         <div class="d-flex gap-3 fs-5">
           {% if site.facebook_url %}<a href="{{ site.facebook_url }}" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>{% endif %}

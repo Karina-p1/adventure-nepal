@@ -4,8 +4,8 @@ from django.shortcuts import render
 from apps.core.models import HighlightItem, SiteStatistic, Testimonial
 from apps.accounts.models import CustomUser
 from apps.reviews.models import Review
+from apps.treks.forms import DURATION_CHOICES
 from apps.treks.models import Trek, TrekRegion
-from apps.treks.views import DURATION_CHOICES
 
 ACTIVITY_ICONS = {
     "trekking": "bi-tsunami", "tour": "bi-bus-front", "sightseeing": "bi-binoculars",

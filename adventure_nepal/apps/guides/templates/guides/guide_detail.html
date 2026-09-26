@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}{{ guide.get_full_name }} — Adventure Nepal{% endblock %}
+{% block title %}{{ guide.get_full_name|default:guide.username }} — Adventure Nepal{% endblock %}
 
 {% block content %}
 <section class="py-5">
@@ -14,44 +14,27 @@
             {{ guide.first_name|first|default:guide.username|first }}
           </div>
         {% endif %}
-        <h2 class="fw-bold">{{ guide.get_full_name|default:guide.username }}</h2>
-        {% if guide.guide_profile %}
-          <p class="text-secondary">{{ guide.guide_profile.specialization|default:"General Trekking Guide" }}</p>
-        {% endif %}
+        <h1 class="h2 fw-bold">{{ guide.get_full_name|default:guide.username }}</h1>
+        {% if guide.guide_profile %}<p class="text-muted-custom">{{ guide.guide_profile.specialization|default:"Trekking guide" }}</p>{% endif %}
       </div>
 
       <div class="col-lg-8" data-aos="fade-up">
         {% if guide.guide_profile %}
           <div class="d-flex gap-4 mb-4 flex-wrap">
-            <span>🏔️ {{ guide.guide_profile.experience_years }} years experience</span>
-            {% if guide.guide_profile.languages %}
-              <span>🗣️ {{ guide.guide_profile.languages }}</span>
-            {% endif %}
+            <span><i class="bi bi-award" aria-hidden="true"></i> {{ guide.guide_profile.experience_years }} years experience</span>
+            {% if guide.guide_profile.languages %}<span><i class="bi bi-translate" aria-hidden="true"></i> {{ guide.guide_profile.languages }}</span>{% endif %}
           </div>
-
-          {% if guide.guide_profile.bio %}
-            <h4 class="mb-2">About</h4>
-            <p class="text-secondary">{{ guide.guide_profile.bio|linebreaks }}</p>
-          {% endif %}
-
-          {% if guide.guide_profile.certifications %}
-            <h4 class="mt-4 mb-2">Certifications</h4>
-            <p class="text-secondary">{{ guide.guide_profile.certifications }}</p>
-          {% endif %}
+          {% if guide.guide_profile.bio %}<h2 class="h4 mb-2">About</h2><div class="text-muted-custom">{{ guide.guide_profile.bio|linebreaks }}</div>{% endif %}
+          {% if guide.guide_profile.certifications %}<h2 class="h4 mt-4 mb-2">Certifications</h2><p class="text-muted-custom">{{ guide.guide_profile.certifications }}</p>{% endif %}
         {% endif %}
 
-        {% if guide.treks_guided.all %}
-          <h4 class="mt-5 mb-3">Treks Led</h4>
+        {% if guide.guided_treks.all %}
+          <h2 class="h4 mt-5 mb-3">Treks led</h2>
           <div class="row g-3">
-            {% for trek in guide.treks_guided.all %}
+            {% for trek in guide.guided_treks.all %}
               <div class="col-md-6">
                 <a href="{{ trek.get_absolute_url }}" class="text-decoration-none text-dark">
-                  <div class="trek-card">
-                    <img src="{{ trek.cover_image.url }}" alt="{{ trek.title }}">
-                    <div class="trek-card-body">
-                      <h6 class="mb-0">{{ trek.title }}</h6>
-                    </div>
-                  </div>
+                  <div class="trek-card"><img src="{{ trek.cover_url }}" alt="{{ trek.title }}"><div class="trek-card-body"><h3 class="h6 mb-0">{{ trek.title }}</h3></div></div>
                 </a>
               </div>
             {% endfor %}
