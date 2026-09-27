@@ -1,0 +1,15 @@
+Hi {{ booking.full_name|default:booking.customer.first_name }},
+
+We've received your booking request:
+
+Reference:   {{ booking.reference }}
+Trek:        {{ booking.trek_title }}
+Date:        {{ booking.trek_date }}
+Travelers:   {{ booking.number_of_people }}
+Total:       ${{ booking.total_price_usd }}
+Status:      {{ booking.get_status_display }}
+
+This is a request, not a confirmed booking yet — we'll be in touch to confirm details.
+
+Thanks,
+{{ site }}

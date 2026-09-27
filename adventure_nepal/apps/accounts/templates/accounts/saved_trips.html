@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Saved Trips — {{ site.site_name }}{% endblock %}
+{% block content %}
+<section class="page-head"><div class="container"><h1>Saved trips</h1></div></section>
+<section class="py-5"><div class="container">
+  <div class="row g-4">
+    {% for s in saved %}
+      <div class="col-md-4">{% with trek=s.trek %}{% include "components/trek_card.html" %}{% endwith %}</div>
+    {% empty %}
+      <div class="col-12"><div class="empty-state"><p class="mb-0">Nothing saved yet. <a href="{% url 'treks:list' %}">Browse treks</a> and tap the heart on any you like.</p></div></div>
+    {% endfor %}
+  </div>
+</div></section>
+{% endblock %}

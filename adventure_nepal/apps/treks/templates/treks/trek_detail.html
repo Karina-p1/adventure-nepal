@@ -179,6 +179,16 @@
             <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary w-100">Log in to book</a>
           {% endif %}
           <a href="{% url 'contact:contact' %}?trek={{ trek.slug }}" class="btn btn-outline-primary w-100 mt-2">Customize this trip</a>
+          {% if user.is_authenticated %}
+            <form method="post" action="{% url 'accounts:toggle_saved_trip' trek.slug %}" class="mt-2">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.path }}">
+              <button type="submit" class="btn btn-outline-secondary w-100 save-toggle {% if is_saved %}is-saved{% endif %}">
+                <i class="bi {% if is_saved %}bi-heart-fill{% else %}bi-heart{% endif %} me-1" aria-hidden="true"></i>
+                {% if is_saved %}Saved{% else %}Save this trip{% endif %}
+              </button>
+            </form>
+          {% endif %}
         </div>
       </div>
     </div>

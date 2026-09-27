@@ -85,10 +85,12 @@ def trek_detail(request, slug):
     )
 
     can_review = False
+    is_saved = False
     if request.user.is_authenticated:
         already = Review.objects.filter(customer=request.user, trek=trek).exists()
         eligible = Booking.objects.filter(customer=request.user, trek=trek, status=Booking.Status.COMPLETED).exists()
         can_review = eligible and not already
+        is_saved = trek.saved_by.filter(user=request.user).exists()
 
     related = (
         Trek.objects.active().exclude(pk=trek.pk).filter(Q(region=trek.region) | Q(category=trek.category))
@@ -98,6 +100,7 @@ def trek_detail(request, slug):
     return render(request, "treks/trek_detail.html", {
         "trek": trek,
         "can_review": can_review,
+        "is_saved": is_saved,
         "included": [i for i in trek.inclusions.all() if i.is_included],
         "excluded": [i for i in trek.inclusions.all() if not i.is_included],
         "related_treks": related,

@@ -1,30 +1,32 @@
 {% extends "base.html" %}
-{% block title %}Book {{ trek.title }} — Adventure Nepal{% endblock %}
+{% block title %}Book {{ trek.title }} — {{ site.site_name }}{% endblock %}
 {% block content %}
 <section class="py-5">
-  <div class="container" style="max-width: 600px;">
+  <div class="container" style="max-width: 640px;">
     <h1 class="fw-bold mb-1" data-aos="fade-up">Book: {{ trek.title }}</h1>
-    <p class="text-secondary mb-4" data-aos="fade-up">${{ trek.display_price }} per person</p>
+    <p class="text-muted-custom mb-4" data-aos="fade-up">
+      ${{ trek.display_price|floatformat:0 }} per person · {{ trek.duration_days }} days · {{ trek.get_difficulty_display }}
+    </p>
 
-    {% if messages %}
-      {% for message in messages %}<div class="alert alert-success">{{ message }}</div>{% endfor %}
-    {% endif %}
-
-    <form method="post" data-aos="fade-up">
+    <form method="post" data-aos="fade-up" data-once>
       {% csrf_token %}
-      <div class="mb-3">
-        <label class="form-label">Preferred Trek Date</label>
-        {{ form.trek_date }}
+      {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+
+      <h2 class="h6 text-uppercase text-muted-custom mb-3">Your details</h2>
+      <div class="row g-3">
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.full_name %}</div>
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.email %}</div>
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.phone %}</div>
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.country %}</div>
       </div>
-      <div class="mb-3">
-        <label class="form-label">Number of People</label>
-        {{ form.number_of_people }}
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Special Requests (optional)</label>
-        {{ form.special_requests }}
-      </div>
-      <button type="submit" class="btn btn-primary w-100">Submit Booking Request</button>
+
+      <h2 class="h6 text-uppercase text-muted-custom mt-4 mb-3">Trip details</h2>
+      {% include "components/form_field.html" with field=form.trek_date %}
+      {% include "components/form_field.html" with field=form.number_of_people %}
+      {% include "components/form_field.html" with field=form.special_requests %}
+
+      <button type="submit" class="btn btn-primary w-100 mt-2">Submit booking request</button>
+      <p class="text-muted-custom small mt-2 mb-0">This sends a request — we'll follow up by email to confirm.</p>
     </form>
   </div>
 </section>

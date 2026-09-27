@@ -263,3 +263,34 @@ body.nav-overlay .site-nav:not(.scrolled):not(.menu-open) .nav-link.active { col
 .booking-panel { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow-md); padding: 1.5rem; position: sticky; top: calc(var(--nav-h) + 16px); }
 .booking-price { font-family: 'Fraunces', serif; margin-bottom: .5rem; }
 .booking-price strong { font-size: 1.9rem; color: var(--primary); }
+
+/* ==========================================================
+   Phase 4: wishlist heart, dashboard, auth pages
+   ========================================================== */
+.trek-card { position: relative; }
+.wishlist-form { position: absolute; top: 12px; right: 12px; z-index: 2; margin: 0; }
+.wishlist-btn {
+  width: 36px; height: 36px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,.92); color: var(--dark); font-size: 1.05rem;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-sm); cursor: pointer; text-decoration: none;
+  transition: transform .15s, color .15s;
+}
+.wishlist-btn:hover { transform: scale(1.08); color: #C0392B; }
+.wishlist-btn.active { color: #C0392B; }
+
+/* Auth pages (login/signup/password reset) */
+.auth-section { padding-block: var(--space-lg); }
+.auth-container { max-width: 440px; }
+
+/* Dashboard */
+.dash-stat { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem; text-align: center; }
+.dash-stat strong { display: block; font-family: 'Fraunces', serif; font-size: 2rem; color: var(--primary); }
+.dash-stat span { font-size: .85rem; color: var(--text-muted); }
+.dash-row { display: flex; justify-content: space-between; align-items: center; gap: 1rem; border-bottom: 1px solid var(--line); padding-block: .9rem; }
+
+/* ==========================================================
+   Phase 4: dashboard, saved trips, auth pages
+   ========================================================== */
+.auth-card .form-label { font-size: .85rem; font-weight: 600; color: var(--text-muted); }
+.save-toggle.is-saved { color: var(--accent); border-color: var(--accent); }

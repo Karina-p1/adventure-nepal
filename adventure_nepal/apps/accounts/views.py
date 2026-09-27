@@ -1,10 +1,21 @@
-from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render, resolve_url
+from django.utils.http import url_has_allowed_host_and_scheme
 
-from .models import CustomerProfile
-from .forms import SignupForm, ProfileForm, CustomerProfileForm
+from apps.bookings.models import Booking
+from apps.reviews.models import Review
+
+from .forms import CustomerProfileForm, GuideSelfEditForm, ProfileForm, SignupForm
+from .models import CustomerProfile, GuideProfile, SavedTrip
+
+
+def _safe_next(request, default="home"):
+    target = request.POST.get("next") or request.GET.get("next") or ""
+    if url_has_allowed_host_and_scheme(target, {request.get_host()}, request.is_secure()):
+        return target
+    return resolve_url(default)
 
 
 def signup(request):
@@ -13,29 +24,67 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("home")
+            messages.success(request, f"Welcome, {user.first_name or user.username}!")
+            return redirect(_safe_next(request))
     else:
         form = SignupForm()
-    return render(request, "accounts/signup.html", {"form": form})
+    return render(request, "accounts/signup.html", {"form": form, "next": request.GET.get("next", "")})
+
 
 @login_required
 def edit_profile(request):
     user = request.user
-    profile, _ = CustomerProfile.objects.get_or_create(user=user)
+
+    if user.is_guide:
+        profile, _ = GuideProfile.objects.get_or_create(user=user)
+        ProfileFormClass, RoleFormClass = ProfileForm, GuideSelfEditForm
+    else:
+        profile, _ = CustomerProfile.objects.get_or_create(user=user)
+        ProfileFormClass, RoleFormClass = ProfileForm, CustomerProfileForm
 
     if request.method == "POST":
-        user_form = ProfileForm(request.POST, request.FILES, instance=user)
-        profile_form = CustomerProfileForm(request.POST, instance=profile)
-        if user_form.is_valid() and profile_form.is_valid():
+        user_form = ProfileFormClass(request.POST, request.FILES, instance=user)
+        role_form = RoleFormClass(request.POST, request.FILES, instance=profile)
+        if user_form.is_valid() and role_form.is_valid():
             user_form.save()
-            profile_form.save()
+            role_form.save()
             messages.success(request, "Your profile has been updated.")
             return redirect("accounts:edit_profile")
     else:
-        user_form = ProfileForm(instance=user)
-        profile_form = CustomerProfileForm(instance=profile)
+        user_form = ProfileFormClass(instance=user)
+        role_form = RoleFormClass(instance=profile)
 
-    return render(request, "accounts/edit_profile.html", {
-        "user_form": user_form,
-        "profile_form": profile_form,
+    return render(request, "accounts/edit_profile.html", {"user_form": user_form, "profile_form": role_form})
+
+
+@login_required
+def dashboard(request):
+    user = request.user
+    bookings = user.bookings.select_related("trek").all()[:5] if hasattr(user, "bookings") else []
+    reviews = Review.objects.filter(customer=user).select_related("trek")[:5]
+    saved = SavedTrip.objects.filter(user=user).select_related("trek")[:6]
+    return render(request, "accounts/dashboard.html", {
+        "recent_bookings": bookings, "recent_reviews": reviews, "saved_trips": saved,
+        "booking_count": user.bookings.count() if hasattr(user, "bookings") else 0,
     })
+
+
+@login_required
+def saved_trips(request):
+    saved = SavedTrip.objects.filter(user=request.user).select_related("trek", "trek__region")
+    return render(request, "accounts/saved_trips.html", {"saved": saved})
+
+
+@login_required
+def toggle_saved_trip(request, slug):
+    if request.method != "POST":
+        return redirect("treks:detail", slug=slug)
+    from apps.treks.models import Trek
+    trek = get_object_or_404(Trek, slug=slug, is_active=True)
+    obj, created = SavedTrip.objects.get_or_create(user=request.user, trek=trek)
+    if not created:
+        obj.delete()
+        messages.info(request, "Removed from your saved trips.")
+    else:
+        messages.success(request, "Saved. Find it under My Bookings → Saved trips.")
+    return redirect(request.POST.get("next") or trek.get_absolute_url())

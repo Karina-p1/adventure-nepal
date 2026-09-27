@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}My Dashboard — {{ site.site_name }}{% endblock %}
+{% block content %}
+<section class="page-head"><div class="container">
+  <h1>My dashboard</h1>
+  <p class="text-muted-custom mb-0">Welcome back, {{ user.first_name|default:user.username }}.</p>
+</div></section>
+<section class="py-5"><div class="container">
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h4 mb-0">Recent bookings</h2>
+        <a href="{% url 'bookings:my_bookings' %}" class="btn btn-outline-primary btn-sm">View all</a>
+      </div>
+      {% for b in recent_bookings %}
+        <div class="border rounded p-3 mb-3 d-flex justify-content-between align-items-center">
+          <div><strong>{{ b.trek_title|default:b.trek.title }}</strong><div class="text-muted-custom small">{{ b.trek_date }} · {{ b.get_status_display }}</div></div>
+          <a href="{% url 'bookings:confirmation' b.pk %}" class="btn btn-sm btn-outline-primary">Details</a>
+        </div>
+      {% empty %}
+        <p class="text-muted-custom">No bookings yet. <a href="{% url 'treks:list' %}">Browse treks</a>.</p>
+      {% endfor %}
+
+      <h2 class="h4 mt-5 mb-3">My reviews</h2>
+      {% for r in recent_reviews %}
+        <div class="border-bottom py-2"><strong>{{ r.trek.title }}</strong> — {{ r.rating }}★
+          <span class="badge bg-{% if r.is_approved %}success{% else %}secondary{% endif %}">{% if r.is_approved %}Published{% else %}Pending approval{% endif %}</span>
+        </div>
+      {% empty %}<p class="text-muted-custom">No reviews yet.</p>{% endfor %}
+    </div>
+    <div class="col-lg-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h5 mb-0">Saved trips</h2>
+        <a href="{% url 'accounts:saved_trips' %}" class="small">View all</a>
+      </div>
+      {% for s in saved_trips %}
+        <a href="{{ s.trek.get_absolute_url }}" class="d-block text-decoration-none text-dark border-bottom py-2">{{ s.trek.title }}</a>
+      {% empty %}<p class="text-muted-custom small">Nothing saved yet — tap the heart on any trek.</p>{% endfor %}
+      <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary w-100 mt-4">Edit profile</a>
+    </div>
+  </div>
+</div></section>
+{% endblock %}

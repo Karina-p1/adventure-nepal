@@ -1,22 +1,37 @@
 {% extends "base.html" %}
-{% block title %}My Bookings — Adventure Nepal{% endblock %}
+{% block title %}My Bookings — {{ site.site_name }}{% endblock %}
 {% block content %}
+<section class="page-head"><div class="container"><h1>My bookings</h1></div></section>
 <section class="py-5">
   <div class="container">
-    <h1 class="fw-bold mb-4" data-aos="fade-up">My Bookings</h1>
-
     {% for booking in bookings %}
-      <div class="border rounded p-3 mb-3 d-flex justify-content-between align-items-center" data-aos="fade-up">
-        <div>
-          <h5 class="mb-1">{{ booking.trek.title }}</h5>
-          <p class="text-secondary small mb-0">{{ booking.trek_date }} · {{ booking.number_of_people }} people · ${{ booking.total_price_usd }}</p>
+      <div class="border rounded p-3 mb-3" data-aos="fade-up">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+          <div>
+            <h2 class="h5 mb-1">{{ booking.trek_title }}</h2>
+            <p class="text-muted-custom small mb-0">
+              {{ booking.reference }} · {{ booking.trek_date }} · {{ booking.number_of_people }} traveler{{ booking.number_of_people|pluralize }} · ${{ booking.total_price_usd|floatformat:0 }}
+            </p>
+          </div>
+          <span class="badge bg-{% if booking.status == 'confirmed' %}success{% elif booking.status == 'cancelled' %}danger{% elif booking.status == 'completed' %}primary{% else %}warning text-dark{% endif %}">
+            {{ booking.get_status_display }}
+          </span>
         </div>
-        <span class="badge bg-{% if booking.status == 'confirmed' %}success{% elif booking.status == 'cancelled' %}danger{% else %}warning text-dark{% endif %}">
-          {{ booking.get_status_display }}
-        </span>
+        <div class="d-flex gap-2 mt-3">
+          <a href="{% url 'bookings:confirmation' booking.pk %}" class="btn btn-outline-primary btn-sm">Details</a>
+          {% if booking.is_cancelable %}
+            <form method="post" action="{% url 'bookings:cancel' booking.pk %}" onsubmit="return confirm('Cancel this booking request?');">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-outline-danger btn-sm">Cancel</button>
+            </form>
+          {% endif %}
+          {% if booking.status == 'completed' and booking.trek_id not in reviewed_trek_ids %}
+            <a href="{% url 'reviews:add' booking.trek.slug %}" class="btn btn-outline-primary btn-sm">Write a review</a>
+          {% endif %}
+        </div>
       </div>
     {% empty %}
-      <p class="text-secondary">You haven't booked any treks yet. <a href="{% url 'treks:list' %}">Browse treks</a>.</p>
+      <div class="empty-state"><p class="mb-0">You haven't booked any treks yet. <a href="{% url 'treks:list' %}">Browse treks</a>.</p></div>
     {% endfor %}
   </div>
 </section>

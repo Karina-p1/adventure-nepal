@@ -62,7 +62,9 @@
               {{ user.first_name|default:user.username }}
             </a>
             <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="{% url 'accounts:dashboard' %}">My dashboard</a></li>
               <li><a class="dropdown-item" href="{% url 'bookings:my_bookings' %}">My bookings</a></li>
+              <li><a class="dropdown-item" href="{% url 'accounts:saved_trips' %}">Saved trips</a></li>
               <li><a class="dropdown-item" href="{% url 'accounts:edit_profile' %}">Edit profile</a></li>
               {% if user.is_staff %}<li><a class="dropdown-item" href="{% url 'admin:index' %}">Admin dashboard</a></li>{% endif %}
               <li><hr class="dropdown-divider"></li>
