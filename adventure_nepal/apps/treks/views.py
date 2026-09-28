@@ -1,8 +1,7 @@
 from django.core.paginator import Paginator
-from django.db.models import Prefetch, Q
+from django.db.models import F, Prefetch, Q
 from django.shortcuts import get_object_or_404, render
 
-from apps.accounts.models import CustomUser
 from apps.bookings.models import Booking
 from apps.reviews.models import Review
 
@@ -18,13 +17,13 @@ def _sort(qs, key):
         "price_desc": qs.order_by("-price_usd"),
         "duration_asc": qs.order_by("duration_days"),
         "newest": qs.order_by("-created_at"),
-        "rating": qs.order_by(("-avg_rating")),
+        # PostgreSQL sorts NULLs first on DESC, which put unrated treks on top of "Highest rated".
+        "rating": qs.order_by(F("avg_rating").desc(nulls_last=True), "title"),
     }.get(key, qs)  # "recommended" / unknown -> model default ordering
 
 
 def trek_list(request):
     form = TrekFilterForm(request.GET or None)
-    form.is_valid()
     data = form.cleaned_data if form.is_valid() else {}
 
     treks = Trek.objects.active().select_related("region").with_rating()
