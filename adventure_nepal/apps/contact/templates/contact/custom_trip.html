@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Design My Trip — {{ site.site_name }}{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container" style="max-width: 720px;">
+    <h1 class="fw-bold mb-1" data-aos="fade-up">Design My Trip</h1>
+    <p class="text-muted-custom mb-4" data-aos="fade-up">
+      Tell us what you have in mind and we'll put together a personalized Nepal itinerary — no obligation.
+    </p>
+
+    <form method="post" data-aos="fade-up" data-once>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+
+      <h2 class="h6 text-uppercase text-muted-custom mb-3">Your details</h2>
+      <div class="row g-3">
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.name %}</div>
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.email %}</div>
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.phone %}</div>
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.country %}</div>
+      </div>
+
+      <h2 class="h6 text-uppercase text-muted-custom mt-4 mb-3">Trip preferences</h2>
+      <div class="row g-3">
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.preferred_destination %}</div>
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.travel_dates %}</div>
+        <div class="col-md-4">{% include "components/form_field.html" with field=form.number_of_travelers %}</div>
+        <div class="col-md-4">{% include "components/form_field.html" with field=form.trip_duration_days %}</div>
+        <div class="col-md-4">{% include "components/form_field.html" with field=form.budget_usd %}</div>
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.difficulty_preference %}</div>
+        <div class="col-md-6">{% include "components/form_field.html" with field=form.accommodation_preference %}</div>
+      </div>
+
+      <h2 class="h6 text-uppercase text-muted-custom mt-4 mb-3">Activities of interest</h2>
+      <div class="row row-cols-2 row-cols-md-4 g-2 mb-3">
+        {% for checkbox in form.activities %}
+          <div class="form-check col">
+            {{ checkbox.tag }}
+            <label class="form-check-label" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+          </div>
+        {% endfor %}
+      </div>
+
+      {% include "components/form_field.html" with field=form.message %}
+
+      <button type="submit" class="btn btn-primary w-100 mt-2">Design My Trip</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

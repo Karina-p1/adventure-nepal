@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Explore Nepal — {{ site.site_name }}{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container">
+    <h1 class="fw-bold mb-4" data-aos="fade-up">Explore Nepal</h1>
+    <div class="row g-4">
+      {% for d in destinations %}
+        <div class="col-md-6 col-lg-4" data-aos="fade-up">
+          <a href="{% url 'destinations:detail' d.slug %}" class="destination-card d-block h-100 text-decoration-none">
+            <div class="destination-card-image" style="background-image:url('{% if d.hero_image %}{{ d.hero_image.url }}{% endif %}')"></div>
+            <div class="destination-card-body">
+              <h2 class="h5 mb-1">{{ d.name }}</h2>
+              {% if d.best_time_to_visit %}<p class="text-muted-custom small mb-0">Best time: {{ d.best_time_to_visit }}</p>{% endif %}
+            </div>
+          </a>
+        </div>
+      {% empty %}
+        <p class="text-muted-custom">Destinations are coming soon.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

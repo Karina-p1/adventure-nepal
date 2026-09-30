@@ -1,36 +1,34 @@
 {% extends "base.html" %}
-{% block title %}Contact Us — Adventure Nepal{% endblock %}
+{% block title %}Contact Us — {{ site.site_name }}{% endblock %}
 {% block content %}
 <section class="py-5">
-  <div class="container" style="max-width: 600px;">
+  <div class="container" style="max-width: 640px;">
     <h1 class="fw-bold mb-1" data-aos="fade-up">Get in Touch</h1>
-    <p class="text-secondary mb-4" data-aos="fade-up">Have questions about a trek? We'd love to hear from you.</p>
+    {% if trek %}
+      <p class="text-muted-custom mb-4" data-aos="fade-up">
+        About <strong>{{ trek.title }}</strong> — we'll follow up by email.
+      </p>
+    {% else %}
+      <p class="text-muted-custom mb-4" data-aos="fade-up">Have questions about a trek? We'd love to hear from you.</p>
+    {% endif %}
 
-    <form method="post" data-aos="fade-up">
+    <form method="post" data-aos="fade-up" data-once>
       {% csrf_token %}
-      <div class="mb-3">
-        <label class="form-label">Name</label>
-        {{ form.name }}
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Email</label>
-        {{ form.email }}
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Subject</label>
-        {{ form.subject }}
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Message</label>
-        {{ form.message }}
-      </div>
+      {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+      {{ form.trek }}
+      {% include "components/form_field.html" with field=form.name %}
+      {% include "components/form_field.html" with field=form.email %}
+      {% include "components/form_field.html" with field=form.subject %}
+      {% include "components/form_field.html" with field=form.message %}
       <button type="submit" class="btn btn-primary w-100">Send Message</button>
     </form>
 
     <div class="mt-5 pt-4 border-top">
-      <p class="text-secondary mb-1">📍 Thamel, Kathmandu, Nepal</p>
-      <p class="text-secondary mb-1">✉️ info@adventurenepal.com</p>
-      <p class="text-secondary">📞 +977 9800000000</p>
+      <p class="text-muted-custom mb-1"><i class="bi bi-geo-alt" aria-hidden="true"></i> {{ site.address }}</p>
+      <p class="text-muted-custom mb-1"><i class="bi bi-envelope" aria-hidden="true"></i> {{ site.email }}</p>
+      <p class="text-muted-custom mb-1"><i class="bi bi-telephone" aria-hidden="true"></i> {{ site.phone }}</p>
+      {% if site.opening_hours %}<p class="text-muted-custom">{{ site.opening_hours }}</p>{% endif %}
+      <a href="{% url 'contact:custom_trip' %}" class="btn btn-outline-primary mt-3">Plan a custom trip instead</a>
     </div>
   </div>
 </section>

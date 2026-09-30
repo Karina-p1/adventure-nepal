@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}{{ destination.name }} — {{ site.site_name }}{% endblock %}
+{% block meta_description %}{{ destination.meta_description|default:destination.overview|truncatechars:155 }}{% endblock %}
+{% block og_title %}{{ destination.name }}{% endblock %}
+{% block content %}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <div class="container">
+    <ol>
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'destinations:list' %}">Destinations</a></li>
+      <li aria-current="page">{{ destination.name }}</li>
+    </ol>
+  </div>
+</nav>
+
+<section class="trek-hero" style="background-image:url('{% if destination.hero_image %}{{ destination.hero_image.url }}{% endif %}')">
+  <div class="trek-hero-overlay"></div>
+  <div class="container trek-hero-content">
+    <h1>{{ destination.name }}</h1>
+    {% if destination.best_time_to_visit %}<p class="lead">Best time to visit: {{ destination.best_time_to_visit }}</p>{% endif %}
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-8">
+        {% if destination.overview %}
+          <h2>Overview</h2>
+          <div class="prose">{{ destination.overview|linebreaks }}</div>
+        {% endif %}
+
+        {% if destination.latitude and destination.longitude %}
+          <h2 class="mt-5">Map</h2>
+          <div class="ratio ratio-16x9">
+            <iframe src="https://www.openstreetmap.org/export/embed.html?bbox={{ destination.longitude }}%2C{{ destination.latitude }}%2C{{ destination.longitude }}%2C{{ destination.latitude }}&layer=mapnik&marker={{ destination.latitude }}%2C{{ destination.longitude }}"
+                    style="border:0" loading="lazy" title="Map of {{ destination.name }}"></iframe>
+          </div>
+        {% endif %}
+
+        {% if treks %}
+          <h2 class="mt-5">Popular treks in {{ destination.name }}</h2>
+          <div class="row g-4">
+            {% for trek in treks %}
+              <div class="col-md-6"><div class="trek-card h-100">{% include "components/trek_card.html" with trek=trek %}</div></div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-muted-custom mt-4">No treks are listed for this destination yet.</p>
+        {% endif %}
+      </div>
+
+      <div class="col-lg-4">
+        <div class="booking-panel">
+          <h2 class="h5">Plan a trip here</h2>
+          <a href="{% url 'treks:list' %}?region={{ destination.slug|urlencode }}" class="btn btn-primary w-100 mb-2">Browse treks</a>
+          <a href="{% url 'contact:custom_trip' %}" class="btn btn-outline-primary w-100">Design a custom trip</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

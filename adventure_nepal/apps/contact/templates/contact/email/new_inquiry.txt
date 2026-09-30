@@ -1,0 +1,11 @@
+New contact inquiry received.
+
+Name: {{ contact_message.name }}
+Email: {{ contact_message.email }}
+Subject: {{ contact_message.subject }}
+{% if contact_message.trek %}Trek: {{ contact_message.trek.title }}
+{% endif %}
+Message:
+{{ contact_message.message }}
+
+Reply directly to this person at {{ contact_message.email }}.

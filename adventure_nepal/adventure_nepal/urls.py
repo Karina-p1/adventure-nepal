@@ -11,6 +11,7 @@ urlpatterns = [
     path("about/", views.about, name="about"),
     path("", include("apps.core.urls")),
     path("treks/", include("apps.treks.urls")),
+    path("destinations/", include("apps.treks.destination_urls")),
     path("guides/", include("apps.guides.urls")),
     path("accounts/", include("apps.accounts.urls")),
     path("bookings/", include("apps.bookings.urls")),
