@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "apps.bookings",
     "apps.reviews",
     "apps.contact",
+    "apps.dashboard",
 ]
 
 MIDDLEWARE = [

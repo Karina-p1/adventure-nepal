@@ -1,0 +1,422 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-page-heading">
+
+    <div>
+        <span class="staff-eyebrow">
+            OVERVIEW
+        </span>
+
+        <h1>
+            Welcome back,
+            {{ user.first_name|default:user.username }}.
+        </h1>
+
+        <p>
+            Here's what's happening across Adventure Nepal.
+        </p>
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     PRIMARY STATS
+========================================================= -->
+
+<div class="staff-stats-grid">
+
+    <div class="staff-stat-card">
+
+        <div class="staff-stat-icon">
+            <i class="bi bi-calendar-check"></i>
+        </div>
+
+        <div>
+            <span>Total bookings</span>
+            <strong>{{ total_bookings }}</strong>
+        </div>
+
+    </div>
+
+
+    <div class="staff-stat-card">
+
+        <div class="staff-stat-icon warning">
+            <i class="bi bi-hourglass-split"></i>
+        </div>
+
+        <div>
+            <span>Pending</span>
+            <strong>{{ pending_bookings }}</strong>
+        </div>
+
+    </div>
+
+
+    <div class="staff-stat-card">
+
+        <div class="staff-stat-icon success">
+            <i class="bi bi-check2-circle"></i>
+        </div>
+
+        <div>
+            <span>Confirmed</span>
+            <strong>{{ confirmed_bookings }}</strong>
+        </div>
+
+    </div>
+
+
+    <div class="staff-stat-card">
+
+        <div class="staff-stat-icon money">
+            <i class="bi bi-cash-stack"></i>
+        </div>
+
+        <div>
+            <span>Booking value</span>
+            <strong>
+                ${{ booking_value|floatformat:2 }}
+            </strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     SECONDARY STATS
+========================================================= -->
+
+<div class="staff-mini-stats">
+
+    <div>
+        <span>Customers</span>
+        <strong>{{ customer_count }}</strong>
+    </div>
+
+    <div>
+        <span>Active treks</span>
+        <strong>{{ active_trek_count }}</strong>
+    </div>
+
+    <div>
+        <span>Guides</span>
+        <strong>{{ guide_count }}</strong>
+    </div>
+
+    <div>
+        <span>Completed trips</span>
+        <strong>{{ completed_bookings }}</strong>
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     ATTENTION
+========================================================= -->
+
+<div class="staff-section-head">
+
+    <div>
+        <span class="staff-eyebrow">
+            NEEDS ATTENTION
+        </span>
+
+        <h2>Work queue</h2>
+    </div>
+
+</div>
+
+
+<div class="staff-attention-grid">
+
+    <div class="staff-attention-card">
+
+        <i class="bi bi-envelope"></i>
+
+        <div>
+            <strong>{{ unresolved_inquiry_count }}</strong>
+            <span>Unresolved inquiries</span>
+        </div>
+
+    </div>
+
+
+    <div class="staff-attention-card">
+
+        <i class="bi bi-signpost-split"></i>
+
+        <div>
+            <strong>{{ new_custom_trip_count }}</strong>
+            <span>New custom trip requests</span>
+        </div>
+
+    </div>
+
+
+    <div class="staff-attention-card">
+
+        <i class="bi bi-star"></i>
+
+        <div>
+            <strong>{{ pending_review_count }}</strong>
+            <span>Reviews awaiting approval</span>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     RECENT BOOKINGS
+========================================================= -->
+
+<section class="staff-panel">
+
+    <div class="staff-panel-head">
+
+        <div>
+            <span class="staff-eyebrow">
+                BOOKINGS
+            </span>
+
+            <h2>Recent bookings</h2>
+        </div>
+
+    </div>
+
+
+    {% if recent_bookings %}
+
+        <div class="table-responsive">
+
+            <table class="staff-table">
+
+                <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Customer</th>
+                        <th>Trek</th>
+                        <th>Trip date</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for booking in recent_bookings %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ booking.reference }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ booking.full_name|default:booking.customer }}
+                            </td>
+
+                            <td>
+                                {{ booking.trek_title }}
+                            </td>
+
+                            <td>
+                                {{ booking.trek_date|date:"M d, Y" }}
+                            </td>
+
+                            <td>
+                                <span class="status-badge status-{{ booking.status }}">
+                                    {{ booking.get_status_display }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {% if booking.total_price_usd %}
+                                    ${{ booking.total_price_usd|floatformat:2 }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="staff-empty">
+            <i class="bi bi-calendar-x"></i>
+
+            <p>
+                No bookings have been received yet.
+            </p>
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- =========================================================
+     INQUIRIES + CUSTOM TRIPS
+========================================================= -->
+
+<div class="staff-two-column">
+
+    <section class="staff-panel">
+
+        <div class="staff-panel-head">
+
+            <div>
+                <span class="staff-eyebrow">
+                    INQUIRIES
+                </span>
+
+                <h2>Recent messages</h2>
+            </div>
+
+        </div>
+
+
+        {% if recent_inquiries %}
+
+            {% for inquiry in recent_inquiries %}
+
+                <div class="staff-activity-row">
+
+                    <div class="staff-activity-icon">
+                        <i class="bi bi-envelope"></i>
+                    </div>
+
+                    <div class="staff-activity-content">
+
+                        <div class="staff-activity-top">
+
+                            <strong>
+                                {{ inquiry.name }}
+                            </strong>
+
+                            {% if not inquiry.is_resolved %}
+                                <span class="staff-dot"></span>
+                            {% endif %}
+
+                        </div>
+
+                        <span>
+                            {{ inquiry.subject }}
+                        </span>
+
+                        <small>
+                            {{ inquiry.created_at|timesince }} ago
+                        </small>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="staff-empty small">
+                <p>No inquiries yet.</p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <section class="staff-panel">
+
+        <div class="staff-panel-head">
+
+            <div>
+                <span class="staff-eyebrow">
+                    CUSTOM TRIPS
+                </span>
+
+                <h2>Recent requests</h2>
+            </div>
+
+        </div>
+
+
+        {% if recent_custom_trips %}
+
+            {% for trip in recent_custom_trips %}
+
+                <div class="staff-activity-row">
+
+                    <div class="staff-activity-icon">
+                        <i class="bi bi-signpost-split"></i>
+                    </div>
+
+                    <div class="staff-activity-content">
+
+                        <div class="staff-activity-top">
+
+                            <strong>
+                                {{ trip.name }}
+                            </strong>
+
+                            <span class="status-badge status-{{ trip.status }}">
+                                {{ trip.get_status_display }}
+                            </span>
+
+                        </div>
+
+                        <span>
+                            {% if trip.preferred_destination %}
+                                {{ trip.preferred_destination.name }}
+                            {% else %}
+                                Destination flexible
+                            {% endif %}
+
+                            · {{ trip.number_of_travelers }}
+                            traveler{{ trip.number_of_travelers|pluralize }}
+                        </span>
+
+                        <small>
+                            {{ trip.created_at|timesince }} ago
+                        </small>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="staff-empty small">
+                <p>No custom trip requests yet.</p>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}
