@@ -1,5 +1,5 @@
 from django.db.models import Count, F, Q
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from apps.core.models import HighlightItem, SiteStatistic, Testimonial
 from apps.accounts.models import CustomUser
@@ -20,6 +20,10 @@ def _reviewer_name(user):
 
 
 def home(request):
+
+    if request.user.is_authenticated and request.user.role in ("staff", "admin"):
+        return redirect("dashboard:home")
+    
     treks = Trek.objects.active().select_related("region").with_rating()
 
     featured = list(treks.filter(is_featured=True)[:6])

@@ -65,6 +65,41 @@ body.nav-overlay .site-nav { position: fixed; inset: 0 0 auto 0; }
 body.nav-overlay .site-nav:not(.scrolled):not(.menu-open) { --nav-fg: #fff; --toggler-filter: invert(1); background: transparent; box-shadow: none; }
 body.nav-overlay .site-nav:not(.scrolled):not(.menu-open) .nav-link.active { color: #fff; }
 
+/* ==========================================================
+   Django Flash Messages
+   ========================================================== */
+
+.flash-messages {
+    position: fixed;
+
+    top: calc(var(--nav-h) + 16px);
+    left: 50%;
+
+    width: min(720px, calc(100% - 32px));
+
+    transform: translateX(-50%);
+
+    z-index: 1100;
+}
+
+.flash-messages .alert {
+    margin: 0;
+
+    border-radius: 12px;
+
+    box-shadow: var(--shadow-lg);
+
+    font-size: 0.95rem;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .flash-messages {
+        top: calc(var(--nav-h) + 10px);
+        width: calc(100% - 20px);
+    }
+}
+
 /* ---------- Buttons ---------- */
 .btn { font-weight: 600; border-radius: 999px; padding: .65rem 1.6rem; transition: transform .2s, box-shadow .2s, background .2s; }
 .btn-sm { padding: .45rem 1.2rem; }

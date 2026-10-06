@@ -20,19 +20,29 @@ def _safe_next(request, default="home"):
 
 
 class SiteLoginView(auth_views.LoginView):
-    """Django's LoginView injects its own `site` (a RequestSite) and `site_name` into the template
-    context. That shadows the `site` settings object from our context processor, so base.html's
-    {{ site.site_name }} crashed with VariableDoesNotExist. Dropping Django's copies lets the
-    context processor's `site` through."""
-
     template_name = "accounts/login.html"
     redirect_authenticated_user = True
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Prevent Django's RequestSite object from replacing
+        # Adventure Nepal's site context.
         context.pop("site", None)
         context.pop("site_name", None)
+
         return context
+
+    def get_success_url(self):
+        user = self.request.user
+
+        if user.role in (
+            user.Role.ADMIN,
+            user.Role.STAFF,
+        ):
+            return resolve_url("dashboard:home")
+
+        return resolve_url("accounts:dashboard")
 
 
 def signup(request):
@@ -77,15 +87,34 @@ def edit_profile(request):
 @login_required
 def dashboard(request):
     user = request.user
+
+    # Staff and admins must use the management dashboard,
+    # never the customer dashboard.
+    if user.role in (
+        user.Role.ADMIN,
+        user.Role.STAFF,
+    ):
+        return redirect("dashboard:home")
+
     bookings = user.bookings.select_related("trek").all()[:5]
-    reviews = Review.objects.filter(customer=user).select_related("trek")[:5]
-    saved = SavedTrip.objects.filter(user=user).select_related("trek")[:6]
-    return render(request, "accounts/dashboard.html", {
-        "recent_bookings": bookings, "recent_reviews": reviews, "saved_trips": saved,
-        "booking_count": user.bookings.count(),
-    })
+    reviews = Review.objects.filter(
+        customer=user
+    ).select_related("trek")[:5]
 
+    saved = SavedTrip.objects.filter(
+        user=user
+    ).select_related("trek")[:6]
 
+    return render(
+        request,
+        "accounts/dashboard.html",
+        {
+            "recent_bookings": bookings,
+            "recent_reviews": reviews,
+            "saved_trips": saved,
+            "booking_count": user.bookings.count(),
+        },
+    )
 @login_required
 def saved_trips(request):
     saved = SavedTrip.objects.filter(user=request.user).select_related("trek", "trek__region")

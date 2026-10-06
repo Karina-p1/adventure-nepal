@@ -53,11 +53,13 @@ class CustomUser(AbstractUser):
     def __str__(self):
         return self.get_full_name() or self.username
 
-    def save(self, *args, **kwargs):
-        # Keep admin-site access in sync with role so the two can't silently disagree.
-        if self.role in (self.Role.STAFF, self.Role.ADMIN):
-            self.is_staff = True
-        super().save(*args, **kwargs)
+def save(self, *args, **kwargs):
+    self.is_staff = self.role in (
+        self.Role.STAFF,
+        self.Role.ADMIN,
+    )
+
+    super().save(*args, **kwargs)
 
     @property
     def is_customer(self):
