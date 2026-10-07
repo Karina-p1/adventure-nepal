@@ -1,0 +1,362 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Customers{% endblock %}
+{% block page_title %}Customers{% endblock %}
+
+{% block content %}
+
+<div class="staff-page-heading">
+
+    <span class="staff-eyebrow">
+        PEOPLE
+    </span>
+
+    <h1>Customer management</h1>
+
+    <p>
+        View customer accounts, booking activity and account status.
+    </p>
+
+</div>
+
+
+<section class="staff-panel">
+
+    <form method="get" class="staff-filter-form">
+
+        <div class="staff-filter-grid customer-filter-grid">
+
+            <div>
+
+                <label class="form-label">
+                    Search
+                </label>
+
+                <input
+                    type="search"
+                    name="q"
+                    value="{{ search }}"
+                    class="form-control"
+                    placeholder="Name, username, email or phone"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label class="form-label">
+                    Status
+                </label>
+
+                <select
+                    name="status"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All customers
+                    </option>
+
+                    <option
+                        value="active"
+                        {% if selected_status == "active" %}
+                            selected
+                        {% endif %}
+                    >
+                        Active
+                    </option>
+
+                    <option
+                        value="inactive"
+                        {% if selected_status == "inactive" %}
+                            selected
+                        {% endif %}
+                    >
+                        Inactive
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label class="form-label">
+                    Country
+                </label>
+
+                <select
+                    name="country"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All countries
+                    </option>
+
+                    {% for country in countries %}
+
+                        <option
+                            value="{{ country }}"
+                            {% if selected_country == country %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ country }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="staff-filter-actions">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Apply filters
+            </button>
+
+            <a
+                href="{% url 'dashboard:customer_list' %}"
+                class="btn btn-outline-secondary"
+            >
+                Clear
+            </a>
+
+        </div>
+
+    </form>
+
+</section>
+
+
+<div class="staff-list-meta">
+
+    {{ total_results }}
+    customer{{ total_results|pluralize }}
+
+</div>
+
+
+<section class="staff-panel">
+
+{% if customers %}
+
+    <div class="table-responsive">
+
+        <table class="staff-table">
+
+            <thead>
+
+                <tr>
+                    <th>Customer</th>
+                    <th>Contact</th>
+                    <th>Country</th>
+                    <th>Bookings</th>
+                    <th>Reviews</th>
+                    <th>Saved</th>
+                    <th>Joined</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            {% for customer in customers %}
+
+                <tr>
+
+                    <td>
+
+                        <div class="staff-person-cell">
+
+                            <div class="staff-person-avatar">
+
+                                {% if customer.avatar %}
+
+                                    <img
+                                        src="{{ customer.avatar.url }}"
+                                        alt=""
+                                    >
+
+                                {% else %}
+
+                                    {{ customer.first_name|default:customer.username|first|upper }}
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+                                    {{ customer.get_full_name|default:customer.username }}
+                                </strong>
+
+                                <small class="staff-table-subtext">
+                                    @{{ customer.username }}
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+
+                        {{ customer.email }}
+
+                        {% if customer.phone %}
+
+                            <small class="staff-table-subtext">
+                                {{ customer.phone }}
+                            </small>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if customer.customer_profile.country %}
+
+                            {{ customer.customer_profile.country }}
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+                        {{ customer.booking_count }}
+                    </td>
+
+
+                    <td>
+                        {{ customer.review_count }}
+                    </td>
+
+
+                    <td>
+                        {{ customer.saved_count }}
+                    </td>
+
+
+                    <td>
+                        {{ customer.date_joined|date:"M d, Y" }}
+                    </td>
+
+
+                    <td>
+
+                        {% if customer.is_active %}
+
+                            <span class="status-badge status-confirmed">
+                                Active
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge status-cancelled">
+                                Inactive
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <a
+                            href="{% url 'dashboard:customer_detail' customer.pk %}"
+                            class="staff-icon-button"
+                            title="View customer"
+                        >
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% if page_obj.has_other_pages %}
+
+        <div class="staff-pagination">
+
+            {% if page_obj.has_previous %}
+
+                <a href="?q={{ search|urlencode }}&status={{ selected_status }}&country={{ selected_country|urlencode }}&page={{ page_obj.previous_page_number }}">
+                    Previous
+                </a>
+
+            {% endif %}
+
+
+            <span>
+                Page {{ page_obj.number }}
+                of {{ page_obj.paginator.num_pages }}
+            </span>
+
+
+            {% if page_obj.has_next %}
+
+                <a href="?q={{ search|urlencode }}&status={{ selected_status }}&country={{ selected_country|urlencode }}&page={{ page_obj.next_page_number }}">
+                    Next
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+
+{% else %}
+
+    <div class="staff-empty">
+
+        <i class="bi bi-people"></i>
+
+        <h3>No customers found</h3>
+
+        <p>
+            Try changing the current filters.
+        </p>
+
+    </div>
+
+{% endif %}
+
+</section>
+
+{% endblock %}

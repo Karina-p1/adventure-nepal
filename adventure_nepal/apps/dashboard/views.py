@@ -9,7 +9,11 @@ from django.db.models import Count, Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from apps.accounts.models import CustomUser
+from apps.accounts.models import (
+    CustomUser,
+    CustomerProfile,
+    GuideProfile,
+)
 from apps.bookings.models import Booking
 from apps.contact.models import ContactMessage, CustomTripRequest
 from apps.reviews.models import Review
@@ -25,7 +29,18 @@ from .forms import (
     TripHighlightFormSet,
     TripInclusionFormSet,
 )
-
+from .forms import (
+    BookingPaymentForm,
+    DestinationForm,
+    GuideAccountForm,
+    GuideManagementForm,
+    TrekForm,
+    TrekImageFormSet,
+    TrekItineraryFormSet,
+    TripFAQFormSet,
+    TripHighlightFormSet,
+    TripInclusionFormSet,
+)
 # ============================================================
 # HELPERS
 # ============================================================
@@ -928,4 +943,453 @@ def destination_edit(request, pk):
             "destination": destination,
             "is_create": False,
         },
+    )
+
+# ============================================================
+# CUSTOMER MANAGEMENT
+# ============================================================
+
+@staff_required
+def customer_list(request):
+    customers = (
+        CustomUser.objects
+        .filter(role=CustomUser.Role.CUSTOMER)
+        .select_related("customer_profile")
+        .annotate(
+            booking_count=Count(
+                "bookings",
+                distinct=True,
+            ),
+            review_count=Count(
+                "reviews",
+                distinct=True,
+            ),
+            saved_count=Count(
+                "saved_trips",
+                distinct=True,
+            ),
+        )
+        .order_by("-date_joined")
+    )
+
+    search = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "").strip()
+    country = request.GET.get("country", "").strip()
+
+    if search:
+        customers = customers.filter(
+            Q(username__icontains=search)
+            | Q(first_name__icontains=search)
+            | Q(last_name__icontains=search)
+            | Q(email__icontains=search)
+            | Q(phone__icontains=search)
+        )
+
+    if status == "active":
+        customers = customers.filter(
+            is_active=True
+        )
+
+    elif status == "inactive":
+        customers = customers.filter(
+            is_active=False
+        )
+
+    if country:
+        customers = customers.filter(
+            customer_profile__country__iexact=country
+        )
+
+    countries = (
+        CustomerProfile.objects
+        .exclude(country="")
+        .values_list("country", flat=True)
+        .distinct()
+        .order_by("country")
+    )
+
+    paginator = Paginator(
+        customers,
+        20,
+    )
+
+    page_obj = paginator.get_page(
+        request.GET.get("page")
+    )
+
+    context = {
+        "customers": page_obj.object_list,
+        "page_obj": page_obj,
+
+        "search": search,
+        "selected_status": status,
+        "selected_country": country,
+
+        "countries": countries,
+
+        "total_results": paginator.count,
+    }
+
+    return render(
+        request,
+        "dashboard/customers/list.html",
+        context,
+    )
+
+
+@staff_required
+def customer_detail(request, pk):
+    customer = get_object_or_404(
+        CustomUser.objects.select_related(
+            "customer_profile",
+        ),
+        pk=pk,
+        role=CustomUser.Role.CUSTOMER,
+    )
+
+    profile = getattr(
+        customer,
+        "customer_profile",
+        None,
+    )
+
+    bookings = (
+        customer.bookings
+        .select_related("trek")
+        .order_by("-created_at")
+    )
+
+    reviews = (
+        Review.objects
+        .filter(customer=customer)
+        .select_related("trek")
+        .order_by("-created_at")
+    )
+
+    saved_trips = (
+        customer.saved_trips
+        .select_related(
+            "trek",
+            "trek__region",
+        )
+        .order_by("-created_at")
+    )
+
+    booking_totals = bookings.aggregate(
+        total=Sum("total_price_usd")
+    )
+
+    context = {
+        "customer": customer,
+        "profile": profile,
+
+        "bookings": bookings[:10],
+        "reviews": reviews[:10],
+        "saved_trips": saved_trips[:10],
+
+        "booking_count": bookings.count(),
+        "review_count": reviews.count(),
+        "saved_count": saved_trips.count(),
+
+        "booking_value": (
+            booking_totals["total"]
+            or Decimal("0.00")
+        ),
+    }
+
+    return render(
+        request,
+        "dashboard/customers/detail.html",
+        context,
+    )
+
+
+@require_POST
+@staff_required
+def customer_toggle_active(request, pk):
+    customer = get_object_or_404(
+        CustomUser,
+        pk=pk,
+        role=CustomUser.Role.CUSTOMER,
+    )
+
+    customer.is_active = not customer.is_active
+
+    customer.save(
+        update_fields=[
+            "is_active",
+        ]
+    )
+
+    if customer.is_active:
+        messages.success(
+            request,
+            f"{customer} has been reactivated.",
+        )
+
+    else:
+        messages.warning(
+            request,
+            f"{customer} has been deactivated.",
+        )
+
+    return redirect(
+        "dashboard:customer_detail",
+        pk=customer.pk,
+    )
+
+# ============================================================
+# GUIDE MANAGEMENT
+# ============================================================
+
+@staff_required
+def guide_manage_list(request):
+    guides = (
+        CustomUser.objects
+        .filter(role=CustomUser.Role.GUIDE)
+        .select_related("guide_profile")
+        .annotate(
+            trek_count=Count(
+                "guided_treks",
+                distinct=True,
+            )
+        )
+        .order_by(
+            "first_name",
+            "username",
+        )
+    )
+
+    search = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "").strip()
+    visibility = request.GET.get("visibility", "").strip()
+
+    if search:
+        guides = guides.filter(
+            Q(username__icontains=search)
+            | Q(first_name__icontains=search)
+            | Q(last_name__icontains=search)
+            | Q(email__icontains=search)
+            | Q(guide_profile__position__icontains=search)
+            | Q(guide_profile__specialization__icontains=search)
+        )
+
+    if status == "active":
+        guides = guides.filter(
+            is_active=True
+        )
+
+    elif status == "inactive":
+        guides = guides.filter(
+            is_active=False
+        )
+
+    if visibility == "public":
+        guides = guides.filter(
+            guide_profile__is_public=True
+        )
+
+    elif visibility == "hidden":
+        guides = guides.filter(
+            guide_profile__is_public=False
+        )
+
+    paginator = Paginator(
+        guides,
+        20,
+    )
+
+    page_obj = paginator.get_page(
+        request.GET.get("page")
+    )
+
+    return render(
+        request,
+        "dashboard/guides/list.html",
+        {
+            "guides": page_obj.object_list,
+            "page_obj": page_obj,
+
+            "search": search,
+            "selected_status": status,
+            "selected_visibility": visibility,
+
+            "total_results": paginator.count,
+        },
+    )
+
+
+@staff_required
+def guide_manage_detail(request, pk):
+    guide = get_object_or_404(
+        CustomUser,
+        pk=pk,
+        role=CustomUser.Role.GUIDE,
+    )
+
+    profile, _ = GuideProfile.objects.get_or_create(
+        user=guide
+    )
+
+    assigned_treks = (
+        guide.guided_treks
+        .select_related("region")
+        .order_by("title")
+    )
+
+    return render(
+        request,
+        "dashboard/guides/detail.html",
+        {
+            "guide": guide,
+            "profile": profile,
+            "assigned_treks": assigned_treks,
+            "trek_count": assigned_treks.count(),
+        },
+    )
+
+
+@staff_required
+def guide_manage_edit(request, pk):
+    guide = get_object_or_404(
+        CustomUser,
+        pk=pk,
+        role=CustomUser.Role.GUIDE,
+    )
+
+    profile, _ = GuideProfile.objects.get_or_create(
+        user=guide
+    )
+
+    if request.method == "POST":
+
+        account_form = GuideAccountForm(
+            request.POST,
+            request.FILES,
+            instance=guide,
+        )
+
+        profile_form = GuideManagementForm(
+            request.POST,
+            request.FILES,
+            instance=profile,
+        )
+
+        if (
+            account_form.is_valid()
+            and profile_form.is_valid()
+        ):
+
+            with transaction.atomic():
+                account_form.save()
+                profile_form.save()
+
+            messages.success(
+                request,
+                f"{guide} has been updated.",
+            )
+
+            return redirect(
+                "dashboard:guide_detail",
+                pk=guide.pk,
+            )
+
+    else:
+
+        account_form = GuideAccountForm(
+            instance=guide,
+        )
+
+        profile_form = GuideManagementForm(
+            instance=profile,
+        )
+
+    return render(
+        request,
+        "dashboard/guides/form.html",
+        {
+            "guide": guide,
+            "profile": profile,
+            "account_form": account_form,
+            "profile_form": profile_form,
+        },
+    )
+
+
+@require_POST
+@staff_required
+def guide_toggle_active(request, pk):
+    guide = get_object_or_404(
+        CustomUser,
+        pk=pk,
+        role=CustomUser.Role.GUIDE,
+    )
+
+    guide.is_active = not guide.is_active
+
+    guide.save(
+        update_fields=[
+            "is_active",
+        ]
+    )
+
+    if guide.is_active:
+
+        messages.success(
+            request,
+            f"{guide} has been activated.",
+        )
+
+    else:
+
+        messages.warning(
+            request,
+            f"{guide} has been deactivated.",
+        )
+
+    return redirect(
+        "dashboard:guide_detail",
+        pk=guide.pk,
+    )
+
+
+@require_POST
+@staff_required
+def guide_toggle_public(request, pk):
+    guide = get_object_or_404(
+        CustomUser,
+        pk=pk,
+        role=CustomUser.Role.GUIDE,
+    )
+
+    profile, _ = GuideProfile.objects.get_or_create(
+        user=guide
+    )
+
+    profile.is_public = not profile.is_public
+
+    profile.save(
+        update_fields=[
+            "is_public",
+            "updated_at",
+        ]
+    )
+
+    if profile.is_public:
+
+        messages.success(
+            request,
+            f"{guide} is now visible on the public guides page.",
+        )
+
+    else:
+
+        messages.warning(
+            request,
+            f"{guide} has been hidden from the public guides page.",
+        )
+
+    return redirect(
+        "dashboard:guide_detail",
+        pk=guide.pk,
     )

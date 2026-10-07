@@ -1,0 +1,464 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    {{ guide.get_full_name|default:guide.username }}
+{% endblock %}
+
+{% block page_title %}
+    Guide
+{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-detail-heading">
+
+    <div>
+
+        <a
+            href="{% url 'dashboard:guide_list' %}"
+            class="staff-back-link"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to guides
+        </a>
+
+        <span class="staff-eyebrow">
+            GUIDE
+        </span>
+
+        <h1>
+            {{ guide.get_full_name|default:guide.username }}
+        </h1>
+
+
+        <div class="staff-detail-statuses">
+
+            {% if guide.is_active %}
+
+                <span class="status-badge status-confirmed">
+                    Active
+                </span>
+
+            {% else %}
+
+                <span class="status-badge status-cancelled">
+                    Inactive
+                </span>
+
+            {% endif %}
+
+
+            {% if profile.is_public %}
+
+                <span class="status-badge status-confirmed">
+                    Public
+                </span>
+
+            {% else %}
+
+                <span class="status-badge status-cancelled">
+                    Hidden
+                </span>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="staff-detail-actions">
+
+        <a
+            href="{% url 'dashboard:guide_edit' guide.pk %}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-pencil me-1"></i>
+            Edit guide
+        </a>
+
+
+        <form
+            method="post"
+            action="{% url 'dashboard:guide_toggle_public' guide.pk %}"
+        >
+
+            {% csrf_token %}
+
+            <button
+                type="submit"
+                class="btn btn-outline-secondary"
+            >
+                {% if profile.is_public %}
+                    Hide publicly
+                {% else %}
+                    Show publicly
+                {% endif %}
+            </button>
+
+        </form>
+
+
+        <form
+            method="post"
+            action="{% url 'dashboard:guide_toggle_active' guide.pk %}"
+        >
+
+            {% csrf_token %}
+
+            {% if guide.is_active %}
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-danger"
+                >
+                    Deactivate
+                </button>
+
+            {% else %}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Activate
+                </button>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="staff-detail-grid">
+
+<div>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            PROFILE
+        </span>
+
+        <h2>Guide information</h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-info-grid">
+
+    <div>
+        <span class="staff-info-label">
+            Position
+        </span>
+
+        <strong>
+            {{ profile.position|default:"—" }}
+        </strong>
+    </div>
+
+
+    <div>
+        <span class="staff-info-label">
+            Experience
+        </span>
+
+        <strong>
+            {{ profile.experience_years }}
+            year{{ profile.experience_years|pluralize }}
+        </strong>
+    </div>
+
+
+    <div>
+        <span class="staff-info-label">
+            Languages
+        </span>
+
+        <strong>
+            {{ profile.languages|default:"—" }}
+        </strong>
+    </div>
+
+
+    <div>
+        <span class="staff-info-label">
+            Specialization
+        </span>
+
+        <strong>
+            {{ profile.specialization|default:"—" }}
+        </strong>
+    </div>
+
+
+    <div class="staff-form-full">
+
+        <span class="staff-info-label">
+            Certifications
+        </span>
+
+        <strong>
+            {{ profile.certifications|default:"—" }}
+        </strong>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            BIO
+        </span>
+
+        <h2>Public biography</h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    {% if profile.bio %}
+
+        {{ profile.bio|linebreaks }}
+
+    {% else %}
+
+        <p class="text-muted mb-0">
+            No biography added.
+        </p>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            ASSIGNMENTS
+        </span>
+
+        <h2>Assigned treks</h2>
+
+    </div>
+
+</div>
+
+
+{% if assigned_treks %}
+
+<div class="table-responsive">
+
+<table class="staff-table">
+
+<thead>
+
+<tr>
+    <th>Trek</th>
+    <th>Destination</th>
+    <th>Duration</th>
+    <th>Status</th>
+    <th></th>
+</tr>
+
+</thead>
+
+
+<tbody>
+
+{% for trek in assigned_treks %}
+
+<tr>
+
+    <td>
+        <strong>
+            {{ trek.title }}
+        </strong>
+    </td>
+
+
+    <td>
+        {{ trek.region|default:"—" }}
+    </td>
+
+
+    <td>
+        {{ trek.duration_days }}
+        day{{ trek.duration_days|pluralize }}
+    </td>
+
+
+    <td>
+
+        {% if trek.is_active %}
+
+            <span class="status-badge status-confirmed">
+                Active
+            </span>
+
+        {% else %}
+
+            <span class="status-badge status-cancelled">
+                Hidden
+            </span>
+
+        {% endif %}
+
+    </td>
+
+
+    <td>
+
+        <a
+            href="{% url 'dashboard:trek_edit' trek.pk %}"
+            class="staff-icon-button"
+        >
+            <i class="bi bi-pencil"></i>
+        </a>
+
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+{% else %}
+
+<div class="staff-empty small">
+
+    <p>
+        No treks assigned to this guide.
+    </p>
+
+</div>
+
+{% endif %}
+
+</section>
+
+</div>
+
+
+<aside>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            ACCOUNT
+        </span>
+
+        <h2>Contact</h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    <p>
+        <strong>Email</strong><br>
+        {{ guide.email }}
+    </p>
+
+    <p>
+        <strong>Phone</strong><br>
+        {{ guide.phone|default:"—" }}
+    </p>
+
+    <p class="mb-0">
+        <strong>Username</strong><br>
+        {{ guide.username }}
+    </p>
+
+</div>
+
+</section>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            PUBLIC
+        </span>
+
+        <h2>Guide page</h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    {% if guide.is_active and profile.is_public %}
+
+        <a
+            href="{% url 'guides:detail' guide.pk %}"
+            class="btn btn-outline-primary w-100"
+            target="_blank"
+        >
+            View public profile
+        </a>
+
+    {% else %}
+
+        <p class="text-muted mb-0">
+            This guide is currently not publicly available.
+        </p>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+</aside>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,633 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    {{ customer.get_full_name|default:customer.username }}
+{% endblock %}
+
+{% block page_title %}
+    Customer
+{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-detail-heading">
+
+    <div>
+
+        <a
+            href="{% url 'dashboard:customer_list' %}"
+            class="staff-back-link"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to customers
+        </a>
+
+        <span class="staff-eyebrow">
+            CUSTOMER
+        </span>
+
+        <h1>
+            {{ customer.get_full_name|default:customer.username }}
+        </h1>
+
+        {% if customer.is_active %}
+
+            <span class="status-badge status-confirmed">
+                Active customer
+            </span>
+
+        {% else %}
+
+            <span class="status-badge status-cancelled">
+                Inactive customer
+            </span>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="staff-detail-actions">
+
+        <form
+            method="post"
+            action="{% url 'dashboard:customer_toggle_active' customer.pk %}"
+            onsubmit="return confirm('{% if customer.is_active %}Deactivate this customer?{% else %}Reactivate this customer?{% endif %}');"
+        >
+
+            {% csrf_token %}
+
+            {% if customer.is_active %}
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-danger"
+                >
+                    <i class="bi bi-person-x me-1"></i>
+                    Deactivate account
+                </button>
+
+            {% else %}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-person-check me-1"></i>
+                    Reactivate account
+                </button>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CUSTOMER STATS
+====================================================== -->
+
+<div class="staff-mini-stats customer-stats">
+
+    <div>
+        <span>Bookings</span>
+        <strong>{{ booking_count }}</strong>
+    </div>
+
+    <div>
+        <span>Booking value</span>
+        <strong>${{ booking_value|floatformat:2 }}</strong>
+    </div>
+
+    <div>
+        <span>Reviews</span>
+        <strong>{{ review_count }}</strong>
+    </div>
+
+    <div>
+        <span>Saved trips</span>
+        <strong>{{ saved_count }}</strong>
+    </div>
+
+</div>
+
+
+<div class="staff-detail-grid">
+
+    <!-- =====================================================
+         LEFT SIDE
+    ====================================================== -->
+
+    <div>
+
+        <!-- ACCOUNT INFORMATION -->
+
+        <section class="staff-panel">
+
+            <div class="staff-panel-head">
+
+                <div>
+
+                    <span class="staff-eyebrow">
+                        ACCOUNT
+                    </span>
+
+                    <h2>Customer information</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="staff-info-grid">
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Full name
+                    </span>
+
+                    <strong>
+                        {{ customer.get_full_name|default:"—" }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Username
+                    </span>
+
+                    <strong>
+                        {{ customer.username }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Email
+                    </span>
+
+                    <strong>
+                        {{ customer.email }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Phone
+                    </span>
+
+                    <strong>
+                        {{ customer.phone|default:"—" }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Email verified
+                    </span>
+
+                    <strong>
+
+                        {% if customer.is_email_verified %}
+                            Yes
+                        {% else %}
+                            No
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Joined
+                    </span>
+
+                    <strong>
+                        {{ customer.date_joined|date:"F d, Y" }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PERSONAL PROFILE -->
+
+        <section class="staff-panel">
+
+            <div class="staff-panel-head">
+
+                <div>
+
+                    <span class="staff-eyebrow">
+                        PROFILE
+                    </span>
+
+                    <h2>Personal details</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="staff-info-grid">
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Country
+                    </span>
+
+                    <strong>
+
+                        {% if profile %}
+                            {{ profile.country|default:"—" }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Address
+                    </span>
+
+                    <strong>
+
+                        {% if profile %}
+                            {{ profile.address|default:"—" }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Date of birth
+                    </span>
+
+                    <strong>
+
+                        {% if profile and profile.date_of_birth %}
+                            {{ profile.date_of_birth|date:"F d, Y" }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Emergency contact
+                    </span>
+
+                    <strong>
+
+                        {% if profile and profile.emergency_contact_name %}
+
+                            {{ profile.emergency_contact_name }}
+
+                            {% if profile.emergency_contact_phone %}
+                                · {{ profile.emergency_contact_phone }}
+                            {% endif %}
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- BOOKING HISTORY -->
+
+        <section class="staff-panel">
+
+            <div class="staff-panel-head">
+
+                <div>
+
+                    <span class="staff-eyebrow">
+                        HISTORY
+                    </span>
+
+                    <h2>Recent bookings</h2>
+
+                </div>
+
+            </div>
+
+
+            {% if bookings %}
+
+                <div class="table-responsive">
+
+                    <table class="staff-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Reference</th>
+                                <th>Trek</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                        {% for booking in bookings %}
+
+                            <tr>
+
+                                <td>
+
+                                    <strong>
+                                        {{ booking.reference }}
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+                                    {{ booking.trek_title }}
+                                </td>
+
+
+                                <td>
+                                    {{ booking.trek_date|date:"M d, Y" }}
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status-badge status-{{ booking.status }}">
+                                        {{ booking.get_status_display }}
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    {% if booking.total_price_usd %}
+
+                                        ${{ booking.total_price_usd|floatformat:2 }}
+
+                                    {% else %}
+
+                                        —
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <td>
+
+                                    <a
+                                        href="{% url 'dashboard:booking_detail' booking.pk %}"
+                                        class="staff-icon-button"
+                                        title="View booking"
+                                    >
+                                        <i class="bi bi-chevron-right"></i>
+                                    </a>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="staff-empty small">
+
+                    <i class="bi bi-calendar-x"></i>
+
+                    <p>
+                        No bookings yet.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+
+    <!-- =====================================================
+         RIGHT SIDE
+    ====================================================== -->
+
+    <aside>
+
+        <!-- RECENT REVIEWS -->
+
+        <section class="staff-panel">
+
+            <div class="staff-panel-head">
+
+                <div>
+
+                    <span class="staff-eyebrow">
+                        REVIEWS
+                    </span>
+
+                    <h2>Recent reviews</h2>
+
+                </div>
+
+            </div>
+
+
+            {% if reviews %}
+
+                {% for review in reviews %}
+
+                    <div class="staff-activity-row">
+
+                        <div class="staff-activity-icon">
+
+                            <i class="bi bi-star"></i>
+
+                        </div>
+
+
+                        <div class="staff-activity-content">
+
+                            <strong>
+                                {{ review.trek.title }}
+                            </strong>
+
+                            <span>
+
+                                {{ review.rating }} / 5
+
+                                {% if review.title %}
+                                    · {{ review.title }}
+                                {% endif %}
+
+                            </span>
+
+                            <small>
+                                {{ review.created_at|date:"M d, Y" }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="staff-empty small">
+
+                    <p>
+                        No reviews yet.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- SAVED TRIPS -->
+
+        <section class="staff-panel">
+
+            <div class="staff-panel-head">
+
+                <div>
+
+                    <span class="staff-eyebrow">
+                        WISHLIST
+                    </span>
+
+                    <h2>Saved trips</h2>
+
+                </div>
+
+            </div>
+
+
+            {% if saved_trips %}
+
+                {% for saved in saved_trips %}
+
+                    <div class="staff-activity-row">
+
+                        <div class="staff-activity-icon">
+
+                            <i class="bi bi-heart"></i>
+
+                        </div>
+
+
+                        <div class="staff-activity-content">
+
+                            <strong>
+                                {{ saved.trek.title }}
+                            </strong>
+
+                            <span>
+
+                                {% if saved.trek.region %}
+
+                                    {{ saved.trek.region.name }}
+
+                                {% else %}
+
+                                    No destination
+
+                                {% endif %}
+
+                            </span>
+
+                            <small>
+                                Saved {{ saved.created_at|date:"M d, Y" }}
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            {% else %}
+
+                <div class="staff-empty small">
+
+                    <p>
+                        No saved trips.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </aside>
+
+</div>
+
+{% endblock %}

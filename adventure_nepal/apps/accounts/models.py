@@ -113,12 +113,20 @@ class GuideProfile(models.Model):
     def __str__(self):
         return f"Guide profile: {self.user}"
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            from apps.treks.models import unique_slug
-            base = self.user.get_full_name() or self.user.username
-            self.slug = unique_slug(self, base, 160)
-        super().save(*args, **kwargs)
+def save(self, *args, **kwargs):
+    self.is_staff = self.role in (
+        self.Role.STAFF,
+        self.Role.ADMIN,
+    )
+
+    update_fields = kwargs.get("update_fields")
+
+    if update_fields is not None:
+        update_fields = set(update_fields)
+        update_fields.add("is_staff")
+        kwargs["update_fields"] = update_fields
+
+    super().save(*args, **kwargs)
 
     @property
     def display_photo_url(self):

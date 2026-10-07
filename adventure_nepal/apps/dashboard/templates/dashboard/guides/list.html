@@ -1,0 +1,325 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Guides{% endblock %}
+{% block page_title %}Guides{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-page-heading">
+
+    <span class="staff-eyebrow">
+        PEOPLE
+    </span>
+
+    <h1>Guide management</h1>
+
+    <p>
+        Manage guide accounts, profiles and public visibility.
+    </p>
+
+</div>
+
+
+<section class="staff-panel">
+
+<form method="get" class="staff-filter-form">
+
+<div class="staff-filter-grid guide-filter-grid">
+
+    <div>
+
+        <label class="form-label">
+            Search
+        </label>
+
+        <input
+            type="search"
+            name="q"
+            value="{{ search }}"
+            class="form-control"
+            placeholder="Name, email, position or specialization"
+        >
+
+    </div>
+
+
+    <div>
+
+        <label class="form-label">
+            Account
+        </label>
+
+        <select
+            name="status"
+            class="form-select"
+        >
+
+            <option value="">
+                All
+            </option>
+
+            <option
+                value="active"
+                {% if selected_status == "active" %}
+                    selected
+                {% endif %}
+            >
+                Active
+            </option>
+
+            <option
+                value="inactive"
+                {% if selected_status == "inactive" %}
+                    selected
+                {% endif %}
+            >
+                Inactive
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div>
+
+        <label class="form-label">
+            Public visibility
+        </label>
+
+        <select
+            name="visibility"
+            class="form-select"
+        >
+
+            <option value="">
+                All
+            </option>
+
+            <option
+                value="public"
+                {% if selected_visibility == "public" %}
+                    selected
+                {% endif %}
+            >
+                Public
+            </option>
+
+            <option
+                value="hidden"
+                {% if selected_visibility == "hidden" %}
+                    selected
+                {% endif %}
+            >
+                Hidden
+            </option>
+
+        </select>
+
+    </div>
+
+</div>
+
+
+<div class="staff-filter-actions">
+
+    <button
+        type="submit"
+        class="btn btn-primary"
+    >
+        Apply filters
+    </button>
+
+    <a
+        href="{% url 'dashboard:guide_list' %}"
+        class="btn btn-outline-secondary"
+    >
+        Clear
+    </a>
+
+</div>
+
+</form>
+
+</section>
+
+
+<div class="staff-list-meta">
+
+    {{ total_results }}
+    guide{{ total_results|pluralize }}
+
+</div>
+
+
+<section class="staff-panel">
+
+{% if guides %}
+
+<div class="table-responsive">
+
+<table class="staff-table">
+
+<thead>
+
+<tr>
+    <th>Guide</th>
+    <th>Position</th>
+    <th>Experience</th>
+    <th>Specialization</th>
+    <th>Treks</th>
+    <th>Visibility</th>
+    <th>Account</th>
+    <th></th>
+</tr>
+
+</thead>
+
+
+<tbody>
+
+{% for guide in guides %}
+
+<tr>
+
+    <td>
+
+        <div class="staff-person-cell">
+
+            <div class="staff-person-avatar">
+
+                {% if guide.guide_profile.display_photo_url %}
+
+                    <img
+                        src="{{ guide.guide_profile.display_photo_url }}"
+                        alt=""
+                    >
+
+                {% else %}
+
+                    {{ guide.first_name|default:guide.username|first|upper }}
+
+                {% endif %}
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    {{ guide.get_full_name|default:guide.username }}
+                </strong>
+
+                <small class="staff-table-subtext">
+                    {{ guide.email }}
+                </small>
+
+            </div>
+
+        </div>
+
+    </td>
+
+
+    <td>
+        {{ guide.guide_profile.position|default:"—" }}
+    </td>
+
+
+    <td>
+        {{ guide.guide_profile.experience_years }}
+        year{{ guide.guide_profile.experience_years|pluralize }}
+    </td>
+
+
+    <td>
+        {{ guide.guide_profile.specialization|default:"—" }}
+    </td>
+
+
+    <td>
+        {{ guide.trek_count }}
+    </td>
+
+
+    <td>
+
+        {% if guide.guide_profile.is_public %}
+
+            <span class="status-badge status-confirmed">
+                Public
+            </span>
+
+        {% else %}
+
+            <span class="status-badge status-cancelled">
+                Hidden
+            </span>
+
+        {% endif %}
+
+    </td>
+
+
+    <td>
+
+        {% if guide.is_active %}
+
+            <span class="status-badge status-confirmed">
+                Active
+            </span>
+
+        {% else %}
+
+            <span class="status-badge status-cancelled">
+                Inactive
+            </span>
+
+        {% endif %}
+
+    </td>
+
+
+    <td>
+
+        <a
+            href="{% url 'dashboard:guide_detail' guide.pk %}"
+            class="staff-icon-button"
+            title="View guide"
+        >
+            <i class="bi bi-chevron-right"></i>
+        </a>
+
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+{% else %}
+
+<div class="staff-empty">
+
+    <i class="bi bi-person-badge"></i>
+
+    <h3>No guides found</h3>
+
+    <p>
+        Try changing your search or filters.
+    </p>
+
+</div>
+
+{% endif %}
+
+</section>
+
+{% endblock %}

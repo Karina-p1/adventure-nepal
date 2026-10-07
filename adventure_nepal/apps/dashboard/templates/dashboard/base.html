@@ -118,16 +118,27 @@
                 PEOPLE
             </span>
 
-            <a href="#" class="staff-nav-link">
-                <i class="bi bi-people"></i>
-                <span>Customers</span>
-            </a>
+<a
+    href="{% url 'dashboard:customer_list' %}"
+    class="staff-nav-link
+    {% if request.resolver_match.url_name == 'customer_list' or request.resolver_match.url_name == 'customer_detail' %}
+        active
+    {% endif %}"
+>
+    <i class="bi bi-people"></i>
+    <span>Customers</span>
+</a>
 
-            <a href="#" class="staff-nav-link">
-                <i class="bi bi-person-badge"></i>
-                <span>Guides</span>
-            </a>
-
+<a
+    href="{% url 'dashboard:guide_list' %}"
+    class="staff-nav-link
+    {% if request.resolver_match.url_name == 'guide_list' or request.resolver_match.url_name == 'guide_detail' or request.resolver_match.url_name == 'guide_edit' %}
+        active
+    {% endif %}"
+>
+    <i class="bi bi-person-badge"></i>
+    <span>Guides</span>
+</a>
 
             <span class="staff-nav-label">
                 COMMUNICATION

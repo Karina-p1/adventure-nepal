@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import inlineformset_factory
 
-from apps.accounts.models import CustomUser
+from apps.accounts.models import CustomUser, GuideProfile
 from apps.bookings.models import Booking
 from apps.treks.models import (
     Trek,
@@ -503,3 +503,142 @@ TrekImageFormSet = inlineformset_factory(
     extra=1,
     can_delete=True,
 )
+class GuideAccountForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = [
+            "first_name",
+            "last_name",
+            "email",
+            "phone",
+            "avatar",
+        ]
+
+        widgets = {
+            "first_name": forms.TextInput(
+                attrs={"class": "form-control"}
+            ),
+            "last_name": forms.TextInput(
+                attrs={"class": "form-control"}
+            ),
+            "email": forms.EmailInput(
+                attrs={"class": "form-control"}
+            ),
+            "phone": forms.TextInput(
+                attrs={"class": "form-control"}
+            ),
+            "avatar": forms.ClearableFileInput(
+                attrs={"class": "form-control"}
+            ),
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip().lower()
+
+        if (
+            CustomUser.objects
+            .filter(email__iexact=email)
+            .exclude(pk=self.instance.pk)
+            .exists()
+        ):
+            raise forms.ValidationError(
+                "Another account already uses this email."
+            )
+
+        return email
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+
+        if "email" in self.changed_data:
+            user.is_email_verified = False
+
+        if commit:
+            user.save()
+
+        return user
+
+
+class GuideManagementForm(forms.ModelForm):
+    class Meta:
+        model = GuideProfile
+
+        fields = [
+            "position",
+            "photo",
+            "bio",
+            "experience_years",
+            "languages",
+            "specialization",
+            "certifications",
+            "facebook_url",
+            "instagram_url",
+            "linkedin_url",
+            "is_public",
+            "order",
+        ]
+
+        widgets = {
+            "position": forms.TextInput(
+                attrs={"class": "form-control"}
+            ),
+
+            "photo": forms.ClearableFileInput(
+                attrs={"class": "form-control"}
+            ),
+
+            "bio": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 6,
+                }
+            ),
+
+            "experience_years": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": 0,
+                }
+            ),
+
+            "languages": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "English, Nepali, Hindi",
+                }
+            ),
+
+            "specialization": forms.TextInput(
+                attrs={"class": "form-control"}
+            ),
+
+            "certifications": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Mountain guide, First aid, etc.",
+                }
+            ),
+
+            "facebook_url": forms.URLInput(
+                attrs={"class": "form-control"}
+            ),
+
+            "instagram_url": forms.URLInput(
+                attrs={"class": "form-control"}
+            ),
+
+            "linkedin_url": forms.URLInput(
+                attrs={"class": "form-control"}
+            ),
+
+            "is_public": forms.CheckboxInput(
+                attrs={"class": "form-check-input"}
+            ),
+
+            "order": forms.NumberInput(
+                attrs={
+                    "class": "form-control",
+                    "min": 0,
+                }
+            ),
+        }
