@@ -49,10 +49,6 @@
 
   {% include "partials/footer.html" %}
 
-  {% if WHATSAPP_NUMBER %}
-    <a class="wa-float" href="https://wa.me/{{ WHATSAPP_NUMBER }}?text=Hi%20{{ site.site_name|urlencode }}%2C%20I%27d%20like%20to%20ask%20about%20a%20trek."
-       target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp"><i class="bi bi-whatsapp"></i></a>
-  {% endif %}
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>

@@ -1,0 +1,478 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Custom Trip Request{% endblock %}
+{% block page_title %}Custom Trip{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-detail-heading">
+
+    <div>
+
+        <a
+            href="{% url 'dashboard:custom_trip_list' %}"
+            class="staff-back-link"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to custom trips
+        </a>
+
+
+        <span class="staff-eyebrow">
+            CUSTOM TRIP
+        </span>
+
+
+        <h1>
+            {{ trip_request.name }}
+        </h1>
+
+
+        {% if trip_request.status == "new" %}
+
+            <span class="status-badge status-pending">
+                New
+            </span>
+
+        {% elif trip_request.status == "contacted" %}
+
+            <span class="status-badge custom-status-contacted">
+                Contacted
+            </span>
+
+        {% elif trip_request.status == "quoted" %}
+
+            <span class="status-badge custom-status-quoted">
+                Quoted
+            </span>
+
+        {% else %}
+
+            <span class="status-badge status-confirmed">
+                Closed
+            </span>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="staff-detail-actions">
+
+        <a
+            href="mailto:{{ trip_request.email }}?subject=Adventure Nepal - Custom Trip Request"
+            class="btn btn-outline-secondary"
+        >
+            <i class="bi bi-envelope me-1"></i>
+            Email customer
+        </a>
+
+    </div>
+
+</div>
+
+
+<div class="staff-detail-grid">
+
+<div>
+
+
+<!-- =====================================================
+     TRIP REQUIREMENTS
+====================================================== -->
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            TRIP
+        </span>
+
+        <h2>
+            Travel requirements
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-info-grid">
+
+    <div>
+
+        <span class="staff-info-label">
+            Destination
+        </span>
+
+        <strong>
+
+            {% if trip_request.preferred_destination %}
+                {{ trip_request.preferred_destination.name }}
+            {% else %}
+                No preference
+            {% endif %}
+
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span class="staff-info-label">
+            Travel dates
+        </span>
+
+        <strong>
+            {{ trip_request.travel_dates|default:"—" }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span class="staff-info-label">
+            Travelers
+        </span>
+
+        <strong>
+            {{ trip_request.number_of_travelers }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span class="staff-info-label">
+            Duration
+        </span>
+
+        <strong>
+
+            {% if trip_request.trip_duration_days %}
+
+                {{ trip_request.trip_duration_days }}
+                day{{ trip_request.trip_duration_days|pluralize }}
+
+            {% else %}
+                —
+            {% endif %}
+
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span class="staff-info-label">
+            Budget
+        </span>
+
+        <strong>
+
+            {% if trip_request.budget_usd %}
+                ${{ trip_request.budget_usd|floatformat:2 }}
+            {% else %}
+                —
+            {% endif %}
+
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span class="staff-info-label">
+            Difficulty
+        </span>
+
+        <strong>
+            {{ trip_request.get_difficulty_preference_display }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span class="staff-info-label">
+            Accommodation
+        </span>
+
+        <strong>
+            {{ trip_request.get_accommodation_preference_display }}
+        </strong>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     ACTIVITIES
+====================================================== -->
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            INTERESTS
+        </span>
+
+        <h2>
+            Requested activities
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+{% if trip_request.activities_list %}
+
+    <div class="custom-trip-activities">
+
+        {% for activity in trip_request.activities_list %}
+
+            <span class="custom-trip-activity">
+                {{ activity }}
+            </span>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <p class="text-muted mb-0">
+        No specific activities selected.
+    </p>
+
+{% endif %}
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     MESSAGE
+====================================================== -->
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            MESSAGE
+        </span>
+
+        <h2>
+            Customer notes
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    {% if trip_request.message %}
+
+        <div class="custom-trip-message">
+            {{ trip_request.message|linebreaks }}
+        </div>
+
+    {% else %}
+
+        <p class="text-muted mb-0">
+            No additional message was provided.
+        </p>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+</div>
+
+
+<!-- =====================================================
+     RIGHT SIDE
+====================================================== -->
+
+<aside>
+
+
+<!-- CUSTOMER -->
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            CUSTOMER
+        </span>
+
+        <h2>
+            Contact details
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    <p>
+        <strong>Name</strong><br>
+        {{ trip_request.name }}
+    </p>
+
+
+    <p>
+        <strong>Email</strong><br>
+
+        <a href="mailto:{{ trip_request.email }}">
+            {{ trip_request.email }}
+        </a>
+    </p>
+
+
+    <p>
+        <strong>Phone</strong><br>
+        {{ trip_request.phone|default:"—" }}
+    </p>
+
+
+    <p>
+        <strong>Country</strong><br>
+        {{ trip_request.country|default:"—" }}
+    </p>
+
+
+    <p class="mb-0">
+        <strong>Submitted</strong><br>
+        {{ trip_request.created_at|date:"F d, Y · h:i A" }}
+    </p>
+
+</div>
+
+</section>
+
+
+<!-- STATUS -->
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            WORKFLOW
+        </span>
+
+        <h2>
+            Request status
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+<form
+    method="post"
+    action="{% url 'dashboard:custom_trip_status_update' trip_request.pk %}"
+>
+
+    {% csrf_token %}
+
+
+    <label class="form-label">
+        Current stage
+    </label>
+
+
+    <select
+        name="status"
+        class="form-select"
+        required
+    >
+
+        {% for value, label in status_choices %}
+
+            <option
+                value="{{ value }}"
+                {% if trip_request.status == value %}
+                    selected
+                {% endif %}
+            >
+                {{ label }}
+            </option>
+
+        {% endfor %}
+
+    </select>
+
+
+    <button
+        type="submit"
+        class="btn btn-primary w-100 mt-3"
+    >
+        Update status
+    </button>
+
+</form>
+
+
+<div class="custom-trip-workflow">
+
+    <span>New</span>
+    <i class="bi bi-arrow-right"></i>
+
+    <span>Contacted</span>
+    <i class="bi bi-arrow-right"></i>
+
+    <span>Quoted</span>
+    <i class="bi bi-arrow-right"></i>
+
+    <span>Closed</span>
+
+</div>
+
+</div>
+
+</section>
+
+</aside>
+
+</div>
+
+{% endblock %}

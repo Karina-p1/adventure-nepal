@@ -102,7 +102,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Site-wide values (all from .env, nothing hard-coded)
 SITE_URL = config("SITE_URL", default="http://localhost:8000").rstrip("/")
-WHATSAPP_NUMBER = "".join(c for c in config("WHATSAPP_NUMBER", default="") if c.isdigit())
+
 
 # Email: console in development, SMTP in production
 EMAIL_BACKEND = config("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
@@ -112,7 +112,7 @@ EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="Adventure Nepal <no-reply@localhost>")
-ADMIN_NOTIFY_EMAIL = config("ADMIN_NOTIFY_EMAIL", default="")
+
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", default=True, cast=bool)

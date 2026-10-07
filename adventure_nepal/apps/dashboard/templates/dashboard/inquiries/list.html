@@ -1,0 +1,278 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Inquiries{% endblock %}
+{% block page_title %}Inquiries{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-page-heading">
+
+    <span class="staff-eyebrow">
+        COMMUNICATION
+    </span>
+
+    <h1>Inquiry management</h1>
+
+    <p>
+        Review customer questions and track which inquiries still need attention.
+    </p>
+
+</div>
+
+
+<section class="staff-panel">
+
+<form method="get" class="staff-filter-form">
+
+<div class="staff-filter-grid inquiry-filter-grid">
+
+    <div>
+
+        <label class="form-label">
+            Search
+        </label>
+
+        <input
+            type="search"
+            name="q"
+            value="{{ search }}"
+            class="form-control"
+            placeholder="Name, email, subject, trek or message"
+        >
+
+    </div>
+
+
+    <div>
+
+        <label class="form-label">
+            Status
+        </label>
+
+        <select
+            name="status"
+            class="form-select"
+        >
+
+            <option value="">
+                All inquiries
+            </option>
+
+            <option
+                value="unresolved"
+                {% if selected_status == "unresolved" %}
+                    selected
+                {% endif %}
+            >
+                Unresolved
+            </option>
+
+            <option
+                value="resolved"
+                {% if selected_status == "resolved" %}
+                    selected
+                {% endif %}
+            >
+                Resolved
+            </option>
+
+        </select>
+
+    </div>
+
+</div>
+
+
+<div class="staff-filter-actions">
+
+    <button
+        type="submit"
+        class="btn btn-primary"
+    >
+        Apply filters
+    </button>
+
+    <a
+        href="{% url 'dashboard:inquiry_list' %}"
+        class="btn btn-outline-secondary"
+    >
+        Clear
+    </a>
+
+</div>
+
+</form>
+
+</section>
+
+
+<div class="staff-list-meta">
+
+    {{ total_results }}
+    inquir{{ total_results|pluralize:"y,ies" }}
+
+</div>
+
+
+<section class="staff-panel">
+
+{% if inquiries %}
+
+<div class="table-responsive">
+
+<table class="staff-table">
+
+<thead>
+
+<tr>
+    <th>Customer</th>
+    <th>Subject</th>
+    <th>Trek</th>
+    <th>Message</th>
+    <th>Date</th>
+    <th>Status</th>
+    <th></th>
+</tr>
+
+</thead>
+
+
+<tbody>
+
+{% for inquiry in inquiries %}
+
+<tr>
+
+    <td>
+
+        <strong>
+            {{ inquiry.name }}
+        </strong>
+
+        <small class="staff-table-subtext">
+            {{ inquiry.email }}
+        </small>
+
+    </td>
+
+
+    <td>
+        {{ inquiry.subject }}
+    </td>
+
+
+    <td>
+
+        {% if inquiry.trek %}
+            {{ inquiry.trek.title }}
+        {% else %}
+            —
+        {% endif %}
+
+    </td>
+
+
+    <td>
+        {{ inquiry.message|truncatechars:80 }}
+    </td>
+
+
+    <td>
+        {{ inquiry.created_at|date:"M d, Y" }}
+    </td>
+
+
+    <td>
+
+        {% if inquiry.is_resolved %}
+
+            <span class="status-badge status-confirmed">
+                Resolved
+            </span>
+
+        {% else %}
+
+            <span class="status-badge status-pending">
+                Needs attention
+            </span>
+
+        {% endif %}
+
+    </td>
+
+
+    <td>
+
+        <a
+            href="{% url 'dashboard:inquiry_detail' inquiry.pk %}"
+            class="staff-icon-button"
+            title="View inquiry"
+        >
+            <i class="bi bi-chevron-right"></i>
+        </a>
+
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+{% if page_obj.has_other_pages %}
+
+<div class="staff-pagination">
+
+    {% if page_obj.has_previous %}
+
+        <a href="?q={{ search|urlencode }}&status={{ selected_status }}&page={{ page_obj.previous_page_number }}">
+            Previous
+        </a>
+
+    {% endif %}
+
+
+    <span>
+        Page {{ page_obj.number }}
+        of {{ page_obj.paginator.num_pages }}
+    </span>
+
+
+    {% if page_obj.has_next %}
+
+        <a href="?q={{ search|urlencode }}&status={{ selected_status }}&page={{ page_obj.next_page_number }}">
+            Next
+        </a>
+
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+
+{% else %}
+
+<div class="staff-empty">
+
+    <i class="bi bi-envelope"></i>
+
+    <h3>No inquiries found</h3>
+
+    <p>
+        No inquiries match the current filters.
+    </p>
+
+</div>
+
+{% endif %}
+
+</section>
+
+{% endblock %}

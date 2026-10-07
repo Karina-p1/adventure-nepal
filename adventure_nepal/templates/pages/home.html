@@ -208,22 +208,6 @@
 </div></section>
 {% endif %}
 
-<!-- 14. Newsletter -->
-<section id="newsletter" class="newsletter">
-  <div class="container"><div class="row g-4 align-items-center">
-    <div class="col-lg-6"><h2>Get trip ideas in your inbox</h2><p class="text-muted-custom mb-0">New routes, seasonal tips and travel advice. Unsubscribe any time.</p></div>
-    <div class="col-lg-6">
-      <form method="post" action="{% url 'core:newsletter' %}" class="d-flex flex-column flex-sm-row gap-2" data-once>
-        {% csrf_token %}<input type="hidden" name="next" value="{{ request.path }}">
-        <input type="text" name="website" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label for="nl-email" class="visually-hidden">Email address</label>
-        <input type="email" id="nl-email" name="email" class="form-control" placeholder="you@example.com" required autocomplete="email">
-        <button type="submit" class="btn btn-primary flex-shrink-0">Subscribe</button>
-      </form>
-    </div>
-  </div></div>
-</section>
-
 <!-- 15. Final CTA -->
 <section class="cta-section text-center">
   <div class="container">

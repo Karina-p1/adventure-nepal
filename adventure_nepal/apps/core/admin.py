@@ -17,7 +17,7 @@ class SiteSettingsAdmin(admin.ModelAdmin):
         return False
 
 
-from .models import HighlightItem, NewsletterSubscriber, SiteStatistic, Testimonial  # noqa: E402
+from .models import HighlightItem, SiteStatistic, Testimonial  # noqa: E402
 
 
 @admin.register(SiteStatistic)
@@ -40,10 +40,3 @@ class TestimonialAdmin(admin.ModelAdmin):
     search_fields = ("name", "quote")
     list_select_related = ("trek",)
 
-
-@admin.register(NewsletterSubscriber)
-class NewsletterSubscriberAdmin(admin.ModelAdmin):
-    list_display = ("email", "is_active", "subscribed_at")
-    list_filter = ("is_active",)
-    search_fields = ("email",)
-    readonly_fields = ("subscribed_at",)

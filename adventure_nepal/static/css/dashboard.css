@@ -1481,3 +1481,135 @@ h6 {
         grid-template-columns: 1fr;
     }
 }
+
+/* ==========================================================
+   REVIEW MANAGEMENT
+========================================================== */
+
+.review-filter-grid {
+    grid-template-columns: 2fr 1fr 1fr;
+}
+
+.review-rating-large {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--staff-primary);
+}
+
+.review-comment {
+    line-height: 1.75;
+}
+
+@media (max-width: 800px) {
+    .review-filter-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================
+   INQUIRY MANAGEMENT
+========================================================== */
+
+.inquiry-filter-grid {
+    grid-template-columns: 2fr 1fr;
+}
+
+.inquiry-message {
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+@media (max-width: 800px) {
+
+    .inquiry-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+/* ==========================================================
+   CUSTOM TRIP MANAGEMENT
+========================================================== */
+
+.custom-trip-filter-grid {
+    grid-template-columns: 2fr 1fr;
+}
+
+.custom-trip-activities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+}
+
+.custom-trip-activity {
+    display: inline-flex;
+    align-items: center;
+
+    padding: .45rem .75rem;
+
+    border: 1px solid var(--staff-line);
+    border-radius: 999px;
+
+    background: #fff;
+
+    font-size: .85rem;
+    font-weight: 600;
+}
+
+.custom-trip-message {
+    line-height: 1.8;
+}
+
+.custom-trip-workflow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    gap: .45rem;
+
+    margin-top: 1.25rem;
+
+    color: var(--staff-muted);
+
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.custom-status-contacted {
+    background: #e8f0ff;
+    color: #315b9d;
+}
+
+.custom-status-quoted {
+    background: #fff3d6;
+    color: #8a6214;
+}
+
+
+@media (max-width: 800px) {
+
+    .custom-trip-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+/* ==========================================================
+   LOGOUT
+========================================================== */
+
+.staff-logout-form {
+    margin: 0;
+}
+
+.staff-logout-button {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.staff-logout-button:hover {
+    color: #fff;
+}

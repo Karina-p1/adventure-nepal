@@ -94,18 +94,3 @@ class Testimonial(models.Model):
     def __str__(self):
         return f"{self.name} ({self.country})" if self.country else self.name
 
-
-class NewsletterSubscriber(models.Model):
-    email = models.EmailField(unique=True)
-    is_active = models.BooleanField(default=True)
-    subscribed_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ["-subscribed_at"]
-
-    def save(self, *args, **kwargs):
-        self.email = self.email.strip().lower()
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.email

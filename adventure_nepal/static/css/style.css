@@ -169,9 +169,6 @@ body.nav-overlay .site-nav:not(.scrolled):not(.menu-open) .nav-link.active { col
 .footer-bottom { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; justify-content: space-between; border-top: 1px solid rgba(255,255,255,.14); margin-top: 3rem; padding-top: 1.25rem; font-size: .9rem; }
 .footer-legal { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
 
-/* ---------- WhatsApp button ---------- */
-.wa-float { position: fixed; right: 18px; bottom: 18px; z-index: 1040; width: 56px; height: 56px; border-radius: 50%; background: #25D366; color: #fff; font-size: 1.9rem; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-lg); text-decoration: none; transition: transform .2s; }
-.wa-float:hover { color: #fff; transform: scale(1.06); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

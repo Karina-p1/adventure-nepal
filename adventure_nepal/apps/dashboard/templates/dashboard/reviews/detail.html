@@ -1,0 +1,303 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Review{% endblock %}
+{% block page_title %}Review{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-detail-heading">
+
+    <div>
+
+        <a
+            href="{% url 'dashboard:review_list' %}"
+            class="staff-back-link"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to reviews
+        </a>
+
+        <span class="staff-eyebrow">
+            CUSTOMER REVIEW
+        </span>
+
+        <h1>
+            {{ review.trek.title }}
+        </h1>
+
+
+        {% if review.is_approved %}
+
+            <span class="status-badge status-confirmed">
+                Visible publicly
+            </span>
+
+        {% else %}
+
+            <span class="status-badge status-cancelled">
+                Hidden
+            </span>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="staff-detail-actions">
+
+        <form
+            method="post"
+            action="{% url 'dashboard:review_toggle_approval' review.pk %}"
+        >
+
+            {% csrf_token %}
+
+            {% if review.is_approved %}
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-danger"
+                    onclick="return confirm('Hide this review from the public website?');"
+                >
+                    <i class="bi bi-eye-slash me-1"></i>
+                    Hide review
+                </button>
+
+            {% else %}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-eye me-1"></i>
+                    Show review
+                </button>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="staff-detail-grid">
+
+<div>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            FEEDBACK
+        </span>
+
+        <h2>
+            Review
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    <div class="review-rating-large">
+        {{ review.rating }} / 5
+    </div>
+
+
+    {% if review.title %}
+
+        <h3>
+            {{ review.title }}
+        </h3>
+
+    {% endif %}
+
+
+    <div class="review-comment">
+        {{ review.comment|linebreaks }}
+    </div>
+
+</div>
+
+</section>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            TRIP
+        </span>
+
+        <h2>
+            Trek information
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-info-grid">
+
+    <div>
+
+        <span class="staff-info-label">
+            Trek
+        </span>
+
+        <strong>
+            {{ review.trek.title }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span class="staff-info-label">
+            Destination
+        </span>
+
+        <strong>
+            {{ review.trek.region|default:"—" }}
+        </strong>
+
+    </div>
+
+
+    {% if review.booking %}
+
+        <div>
+
+            <span class="staff-info-label">
+                Booking reference
+            </span>
+
+            <strong>
+                {{ review.booking.reference }}
+            </strong>
+
+        </div>
+
+
+        <div>
+
+            <span class="staff-info-label">
+                Booking status
+            </span>
+
+            <strong>
+                {{ review.booking.get_status_display }}
+            </strong>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+</div>
+
+
+<aside>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            CUSTOMER
+        </span>
+
+        <h2>
+            Reviewer
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    <p>
+        <strong>
+            {{ review.customer.get_full_name|default:review.customer.username }}
+        </strong>
+    </p>
+
+    <p>
+        {{ review.customer.email }}
+    </p>
+
+    <a
+        href="{% url 'dashboard:customer_detail' review.customer.pk %}"
+        class="btn btn-outline-secondary w-100"
+    >
+        View customer
+    </a>
+
+</div>
+
+</section>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            DETAILS
+        </span>
+
+        <h2>
+            Review details
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    <p>
+        <strong>Submitted</strong><br>
+        {{ review.created_at|date:"F d, Y · h:i A" }}
+    </p>
+
+    <p class="mb-0">
+        <strong>Last updated</strong><br>
+        {{ review.updated_at|date:"F d, Y · h:i A" }}
+    </p>
+
+</div>
+
+</section>
+
+</aside>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,306 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Inquiry{% endblock %}
+{% block page_title %}Inquiry{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-detail-heading">
+
+    <div>
+
+        <a
+            href="{% url 'dashboard:inquiry_list' %}"
+            class="staff-back-link"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to inquiries
+        </a>
+
+
+        <span class="staff-eyebrow">
+            CUSTOMER INQUIRY
+        </span>
+
+
+        <h1>
+            {{ inquiry.subject }}
+        </h1>
+
+
+        {% if inquiry.is_resolved %}
+
+            <span class="status-badge status-confirmed">
+                Resolved
+            </span>
+
+        {% else %}
+
+            <span class="status-badge status-pending">
+                Needs attention
+            </span>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="staff-detail-actions">
+
+        <a
+            href="mailto:{{ inquiry.email }}?subject=Re: {{ inquiry.subject|urlencode }}"
+            class="btn btn-primary"
+        >
+            <i class="bi bi-reply me-1"></i>
+            Reply by email
+        </a>
+
+
+        <form
+            method="post"
+            action="{% url 'dashboard:inquiry_toggle_resolved' inquiry.pk %}"
+        >
+
+            {% csrf_token %}
+
+            {% if inquiry.is_resolved %}
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-secondary"
+                >
+                    Mark unresolved
+                </button>
+
+            {% else %}
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-success"
+                >
+                    <i class="bi bi-check2 me-1"></i>
+                    Mark resolved
+                </button>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<div class="staff-detail-grid">
+
+<div>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            MESSAGE
+        </span>
+
+        <h2>
+            Customer message
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    <div class="inquiry-message">
+        {{ inquiry.message|linebreaks }}
+    </div>
+
+</div>
+
+</section>
+
+
+{% if inquiry.trek %}
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            RELATED TRIP
+        </span>
+
+        <h2>
+            Trek
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-info-grid">
+
+    <div>
+
+        <span class="staff-info-label">
+            Trek
+        </span>
+
+        <strong>
+            {{ inquiry.trek.title }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span class="staff-info-label">
+            Destination
+        </span>
+
+        <strong>
+            {{ inquiry.trek.region|default:"—" }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <span class="staff-info-label">
+            Duration
+        </span>
+
+        <strong>
+            {{ inquiry.trek.duration_days }}
+            day{{ inquiry.trek.duration_days|pluralize }}
+        </strong>
+
+    </div>
+
+
+    <div>
+
+        <a
+            href="{% url 'dashboard:trek_edit' inquiry.trek.pk %}"
+            class="btn btn-outline-secondary"
+        >
+            View trek in management
+        </a>
+
+    </div>
+
+</div>
+
+</section>
+
+{% endif %}
+
+</div>
+
+
+<aside>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            CONTACT
+        </span>
+
+        <h2>
+            Customer details
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    <p>
+        <strong>Name</strong><br>
+        {{ inquiry.name }}
+    </p>
+
+
+    <p>
+        <strong>Email</strong><br>
+
+        <a href="mailto:{{ inquiry.email }}">
+            {{ inquiry.email }}
+        </a>
+
+    </p>
+
+
+    <p class="mb-0">
+        <strong>Received</strong><br>
+        {{ inquiry.created_at|date:"F d, Y · h:i A" }}
+    </p>
+
+</div>
+
+</section>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            STATUS
+        </span>
+
+        <h2>
+            Inquiry state
+        </h2>
+
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+    {% if inquiry.is_resolved %}
+
+        <p class="mb-0">
+            This inquiry has been handled and marked as resolved.
+        </p>
+
+    {% else %}
+
+        <p class="mb-0">
+            This inquiry still requires attention.
+        </p>
+
+    {% endif %}
+
+</div>
+
+</section>
+
+</aside>
+
+</div>
+
+{% endblock %}

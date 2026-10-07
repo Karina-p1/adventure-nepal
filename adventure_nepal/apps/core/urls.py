@@ -5,5 +5,5 @@ from . import views
 app_name = "core"
 
 urlpatterns = [
-    path("newsletter/subscribe/", views.newsletter_subscribe, name="newsletter"),
+
 ]

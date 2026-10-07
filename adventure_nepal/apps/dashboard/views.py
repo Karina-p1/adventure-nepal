@@ -1393,3 +1393,358 @@ def guide_toggle_public(request, pk):
         "dashboard:guide_detail",
         pk=guide.pk,
     )
+
+# ============================================================
+# REVIEW MANAGEMENT
+# ============================================================
+
+@staff_required
+def review_manage_list(request):
+    reviews = (
+        Review.objects
+        .select_related(
+            "customer",
+            "trek",
+            "booking",
+        )
+        .order_by("-created_at")
+    )
+
+    search = request.GET.get("q", "").strip()
+    visibility = request.GET.get("visibility", "").strip()
+    rating = request.GET.get("rating", "").strip()
+
+    if search:
+        reviews = reviews.filter(
+            Q(customer__username__icontains=search)
+            | Q(customer__first_name__icontains=search)
+            | Q(customer__last_name__icontains=search)
+            | Q(customer__email__icontains=search)
+            | Q(trek__title__icontains=search)
+            | Q(title__icontains=search)
+            | Q(comment__icontains=search)
+        )
+
+    if visibility == "visible":
+        reviews = reviews.filter(
+            is_approved=True
+        )
+
+    elif visibility == "hidden":
+        reviews = reviews.filter(
+            is_approved=False
+        )
+
+    if rating in {"1", "2", "3", "4", "5"}:
+        reviews = reviews.filter(
+            rating=int(rating)
+        )
+
+    paginator = Paginator(
+        reviews,
+        20,
+    )
+
+    page_obj = paginator.get_page(
+        request.GET.get("page")
+    )
+
+    return render(
+        request,
+        "dashboard/reviews/list.html",
+        {
+            "reviews": page_obj.object_list,
+            "page_obj": page_obj,
+
+            "search": search,
+            "selected_visibility": visibility,
+            "selected_rating": rating,
+
+            "total_results": paginator.count,
+        },
+    )
+
+
+@staff_required
+def review_manage_detail(request, pk):
+    review = get_object_or_404(
+        Review.objects.select_related(
+            "customer",
+            "trek",
+            "booking",
+        ),
+        pk=pk,
+    )
+
+    return render(
+        request,
+        "dashboard/reviews/detail.html",
+        {
+            "review": review,
+        },
+    )
+
+
+@require_POST
+@staff_required
+def review_toggle_approval(request, pk):
+    review = get_object_or_404(
+        Review,
+        pk=pk,
+    )
+
+    review.is_approved = not review.is_approved
+
+    review.save(
+        update_fields=[
+            "is_approved",
+            "updated_at",
+        ]
+    )
+
+    if review.is_approved:
+        messages.success(
+            request,
+            "The review is now visible publicly.",
+        )
+
+    else:
+        messages.warning(
+            request,
+            "The review has been hidden from the public website.",
+        )
+
+    return redirect(
+        "dashboard:review_detail",
+        pk=review.pk,
+    )
+# ============================================================
+# INQUIRY MANAGEMENT
+# ============================================================
+
+@staff_required
+def inquiry_manage_list(request):
+    inquiries = (
+        ContactMessage.objects
+        .select_related("trek")
+        .order_by("-created_at")
+    )
+
+    search = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "").strip()
+
+    if search:
+        inquiries = inquiries.filter(
+            Q(name__icontains=search)
+            | Q(email__icontains=search)
+            | Q(subject__icontains=search)
+            | Q(message__icontains=search)
+            | Q(trek__title__icontains=search)
+        )
+
+    if status == "unresolved":
+        inquiries = inquiries.filter(
+            is_resolved=False
+        )
+
+    elif status == "resolved":
+        inquiries = inquiries.filter(
+            is_resolved=True
+        )
+
+    paginator = Paginator(
+        inquiries,
+        20,
+    )
+
+    page_obj = paginator.get_page(
+        request.GET.get("page")
+    )
+
+    return render(
+        request,
+        "dashboard/inquiries/list.html",
+        {
+            "inquiries": page_obj.object_list,
+            "page_obj": page_obj,
+
+            "search": search,
+            "selected_status": status,
+
+            "total_results": paginator.count,
+        },
+    )
+
+
+@staff_required
+def inquiry_manage_detail(request, pk):
+    inquiry = get_object_or_404(
+        ContactMessage.objects.select_related(
+            "trek"
+        ),
+        pk=pk,
+    )
+
+    return render(
+        request,
+        "dashboard/inquiries/detail.html",
+        {
+            "inquiry": inquiry,
+        },
+    )
+
+
+@require_POST
+@staff_required
+def inquiry_toggle_resolved(request, pk):
+    inquiry = get_object_or_404(
+        ContactMessage,
+        pk=pk,
+    )
+
+    inquiry.is_resolved = not inquiry.is_resolved
+    inquiry.save(
+        update_fields=["is_resolved"]
+    )
+
+    if inquiry.is_resolved:
+        messages.success(
+            request,
+            "Inquiry marked as resolved.",
+        )
+    else:
+        messages.warning(
+            request,
+            "Inquiry marked as unresolved.",
+        )
+
+    return redirect(
+        "dashboard:inquiry_detail",
+        pk=inquiry.pk,
+    )
+
+# ============================================================
+# CUSTOM TRIP REQUEST MANAGEMENT
+# ============================================================
+
+@staff_required
+def custom_trip_manage_list(request):
+    trip_requests = (
+        CustomTripRequest.objects
+        .select_related("preferred_destination")
+        .order_by("-created_at")
+    )
+
+    search = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "").strip()
+
+    if search:
+        trip_requests = trip_requests.filter(
+            Q(name__icontains=search)
+            | Q(email__icontains=search)
+            | Q(phone__icontains=search)
+            | Q(country__icontains=search)
+            | Q(preferred_destination__name__icontains=search)
+            | Q(travel_dates__icontains=search)
+            | Q(message__icontains=search)
+        )
+
+    valid_statuses = {
+        CustomTripRequest.Status.NEW,
+        CustomTripRequest.Status.CONTACTED,
+        CustomTripRequest.Status.QUOTED,
+        CustomTripRequest.Status.CLOSED,
+    }
+
+    if status in valid_statuses:
+        trip_requests = trip_requests.filter(
+            status=status
+        )
+
+    paginator = Paginator(
+        trip_requests,
+        20,
+    )
+
+    page_obj = paginator.get_page(
+        request.GET.get("page")
+    )
+
+    return render(
+        request,
+        "dashboard/custom_trips/list.html",
+        {
+            "trip_requests": page_obj.object_list,
+            "page_obj": page_obj,
+            "search": search,
+            "selected_status": status,
+            "total_results": paginator.count,
+        },
+    )
+
+
+@staff_required
+def custom_trip_manage_detail(request, pk):
+    trip_request = get_object_or_404(
+        CustomTripRequest.objects.select_related(
+            "preferred_destination"
+        ),
+        pk=pk,
+    )
+
+    return render(
+        request,
+        "dashboard/custom_trips/detail.html",
+        {
+            "trip_request": trip_request,
+            "status_choices": CustomTripRequest.Status.choices,
+        },
+    )
+
+
+@require_POST
+@staff_required
+def custom_trip_status_update(request, pk):
+    trip_request = get_object_or_404(
+        CustomTripRequest,
+        pk=pk,
+    )
+
+    new_status = request.POST.get(
+        "status",
+        ""
+    ).strip()
+
+    valid_statuses = {
+        CustomTripRequest.Status.NEW,
+        CustomTripRequest.Status.CONTACTED,
+        CustomTripRequest.Status.QUOTED,
+        CustomTripRequest.Status.CLOSED,
+    }
+
+    if new_status not in valid_statuses:
+        messages.error(
+            request,
+            "Invalid custom trip status."
+        )
+
+        return redirect(
+            "dashboard:custom_trip_detail",
+            pk=trip_request.pk,
+        )
+
+    trip_request.status = new_status
+
+    trip_request.save(
+        update_fields=["status"]
+    )
+
+    messages.success(
+        request,
+        f"Trip request status changed to {trip_request.get_status_display()}."
+    )
+
+    return redirect(
+        "dashboard:custom_trip_detail",
+        pk=trip_request.pk,
+    )

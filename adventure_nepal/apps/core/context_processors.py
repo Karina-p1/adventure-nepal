@@ -6,8 +6,10 @@ from .models import SiteSettings
 
 
 def site(request):
-    """Site-wide template context: settings record, WhatsApp number, nav regions."""
-    ctx = {"SITE_URL": settings.SITE_URL, "WHATSAPP_NUMBER": settings.WHATSAPP_NUMBER}
+    """Site-wide template context: settings record and navigation regions."""
+    ctx = {
+    "SITE_URL": settings.SITE_URL,
+}
     try:
         from apps.treks.models import TrekRegion
 

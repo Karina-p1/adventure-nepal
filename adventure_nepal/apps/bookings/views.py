@@ -11,25 +11,6 @@ from .forms import BookingForm
 from .models import Booking
 
 
-def _notify_booking_received(booking):
-    """Best-effort email; a failed send should never block the booking itself."""
-    try:
-        context = {"booking": booking, "site": getattr(settings, "SITE_URL", "")}
-        customer_body = render_to_string("bookings/email/booking_received.txt", context)
-        send_mail(
-            f"We received your booking request — {booking.reference}",
-            customer_body, settings.DEFAULT_FROM_EMAIL, [booking.email or booking.customer.email],
-            fail_silently=True,
-        )
-        if settings.ADMIN_NOTIFY_EMAIL:
-            send_mail(
-                f"New booking request — {booking.reference}",
-                customer_body, settings.DEFAULT_FROM_EMAIL, [settings.ADMIN_NOTIFY_EMAIL],
-                fail_silently=True,
-            )
-    except Exception:
-        pass
-
 
 @login_required
 def create_booking(request, slug):
@@ -46,7 +27,7 @@ def create_booking(request, slug):
             booking.customer = request.user
             booking.trek = trek
             booking.save()
-            _notify_booking_received(booking)
+            
             messages.success(request, "Your booking request has been submitted!")
             return redirect("bookings:confirmation", pk=booking.pk)
     else:

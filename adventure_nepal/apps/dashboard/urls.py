@@ -147,4 +147,67 @@ path(
     "guides/<int:pk>/toggle-public/",
     views.guide_toggle_public,
     name="guide_toggle_public",
+),
+# ============================================================
+# REVIEWS
+# ============================================================
+
+path(
+    "reviews/",
+    views.review_manage_list,
+    name="review_list",
+),
+
+path(
+    "reviews/<int:pk>/",
+    views.review_manage_detail,
+    name="review_detail",
+),
+
+path(
+    "reviews/<int:pk>/toggle/",
+    views.review_toggle_approval,
+    name="review_toggle_approval",
+),
+# ============================================================
+# INQUIRIES
+# ============================================================
+
+path(
+    "inquiries/",
+    views.inquiry_manage_list,
+    name="inquiry_list",
+),
+
+path(
+    "inquiries/<int:pk>/",
+    views.inquiry_manage_detail,
+    name="inquiry_detail",
+),
+
+path(
+    "inquiries/<int:pk>/toggle-resolved/",
+    views.inquiry_toggle_resolved,
+    name="inquiry_toggle_resolved",
+),
+# ============================================================
+# CUSTOM TRIP REQUESTS
+# ============================================================
+
+path(
+    "custom-trips/",
+    views.custom_trip_manage_list,
+    name="custom_trip_list",
+),
+
+path(
+    "custom-trips/<int:pk>/",
+    views.custom_trip_manage_detail,
+    name="custom_trip_detail",
+),
+
+path(
+    "custom-trips/<int:pk>/status/",
+    views.custom_trip_status_update,
+    name="custom_trip_status_update",
 ),]
