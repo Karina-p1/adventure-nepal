@@ -1,0 +1,98 @@
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+        <span class="staff-eyebrow">
+            {{ eyebrow }}
+        </span>
+
+        <h2>{{ title }}</h2>
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+{{ formset.management_form }}
+
+
+{% if formset.non_form_errors %}
+
+<div class="alert alert-danger">
+    {{ formset.non_form_errors }}
+</div>
+
+{% endif %}
+
+
+<div class="staff-inline-list">
+
+{% for child_form in formset %}
+
+    <div class="staff-inline-card">
+
+        {% for hidden in child_form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+
+        <div class="staff-inline-grid">
+
+            {% for field in child_form.visible_fields %}
+
+                <div class="staff-form-field
+                    {% if field.name == 'description' or field.name == 'answer' %}
+                        staff-form-full
+                    {% endif %}
+                ">
+
+                    {% if field.name == "DELETE" %}
+
+                        <label class="staff-delete-check">
+                            {{ field }}
+                            Remove
+                        </label>
+
+                    {% elif field.field.widget.input_type == "checkbox" %}
+
+                        <label class="staff-checkbox-card">
+                            {{ field }}
+                            <span>{{ field.label }}</span>
+                        </label>
+
+                    {% else %}
+
+                        <label class="form-label">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                    {% endif %}
+
+
+                    {% for error in field.errors %}
+
+                        <div class="staff-field-error">
+                            {{ error }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</section>

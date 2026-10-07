@@ -919,3 +919,501 @@ h6 {
     }
 
 }
+/* ==========================================================
+   BOOKING MANAGEMENT
+========================================================== */
+
+.staff-filter-form {
+    padding: 1.25rem;
+}
+
+.staff-filter-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 1rem;
+}
+
+.staff-filter-form .form-label {
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--staff-muted);
+}
+
+.staff-filter-actions {
+    display: flex;
+    gap: .65rem;
+    margin-top: 1rem;
+}
+
+.staff-list-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: .75rem;
+    color: var(--staff-muted);
+    font-size: .8rem;
+}
+
+.staff-table-subtext {
+    display: block;
+    margin-top: .15rem;
+    color: var(--staff-muted);
+    font-size: .7rem;
+}
+
+.staff-icon-button {
+    width: 34px;
+    height: 34px;
+
+    display: inline-grid;
+    place-items: center;
+
+    border: 1px solid var(--staff-line);
+    border-radius: 8px;
+
+    color: var(--staff-text);
+    text-decoration: none;
+
+    transition: .15s ease;
+}
+
+.staff-icon-button:hover {
+    background: var(--staff-primary);
+    border-color: var(--staff-primary);
+    color: #fff;
+}
+
+.staff-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 1rem 1.25rem;
+
+    border-top: 1px solid var(--staff-line);
+
+    font-size: .82rem;
+}
+
+.staff-pagination a {
+    color: var(--staff-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+
+/* Payment badges */
+
+.payment-paid {
+    background: #E2F1E9;
+    color: #17603B;
+}
+
+.payment-partial {
+    background: #FFF3D6;
+    color: #8A5B00;
+}
+
+.payment-unpaid {
+    background: #FBE5E3;
+    color: #9C2D25;
+}
+
+.payment-refunded {
+    background: #E6F0F5;
+    color: #285E78;
+}
+
+
+/* Detail */
+
+.staff-detail-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+
+    margin-bottom: 1.5rem;
+}
+
+.staff-detail-heading h1 {
+    margin: .25rem 0 .5rem;
+}
+
+.staff-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+}
+
+.staff-detail-actions form {
+    margin: 0;
+}
+
+.staff-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+
+    margin-bottom: 1rem;
+
+    color: var(--staff-muted);
+    text-decoration: none;
+
+    font-size: .8rem;
+}
+
+.staff-back-link:hover {
+    color: var(--staff-primary);
+}
+
+.staff-detail-statuses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+}
+
+.staff-detail-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(280px, .8fr);
+    gap: 1rem;
+    align-items: start;
+}
+
+.staff-panel-body {
+    padding: 1.25rem;
+}
+
+.staff-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.staff-info-grid > div {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--staff-line);
+}
+
+.staff-info-grid > div:nth-child(odd) {
+    border-right: 1px solid var(--staff-line);
+}
+
+.staff-info-label {
+    display: block;
+
+    margin-bottom: .2rem;
+
+    color: var(--staff-muted);
+
+    font-size: .72rem;
+}
+
+.staff-info-grid strong {
+    font-size: .88rem;
+}
+
+.staff-price {
+    color: var(--staff-primary);
+    font-size: 1.05rem !important;
+}
+
+.staff-price-summary > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+
+    padding: .6rem 0;
+
+    color: var(--staff-muted);
+
+    font-size: .85rem;
+}
+
+.staff-price-summary strong {
+    color: var(--staff-text);
+}
+
+.staff-price-summary .staff-price-total {
+    margin-top: .35rem;
+    padding-top: 1rem;
+
+    border-top: 1px solid var(--staff-line);
+
+    font-size: 1rem;
+}
+
+.staff-price-total strong {
+    color: var(--staff-primary);
+
+    font-family: "Fraunces", serif;
+    font-size: 1.35rem;
+}
+
+
+/* Responsive */
+
+@media (max-width: 1100px) {
+
+    .staff-filter-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 850px) {
+
+    .staff-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-detail-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .staff-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-filter-actions {
+        flex-direction: column;
+    }
+
+    .staff-filter-actions .btn {
+        width: 100%;
+    }
+
+    .staff-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-info-grid > div:nth-child(odd) {
+        border-right: 0;
+    }
+
+}
+
+/* ==========================================================
+   TREK / DESTINATION MANAGEMENT
+========================================================== */
+
+.staff-page-heading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+}
+
+.staff-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.staff-form-grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.staff-form-full {
+    grid-column: 1 / -1;
+}
+
+.staff-form-field .form-label {
+    display: block;
+
+    margin-bottom: .35rem;
+
+    color: var(--staff-muted);
+
+    font-size: .78rem;
+    font-weight: 600;
+}
+
+.staff-help {
+    display: block;
+
+    margin-top: .35rem;
+
+    color: var(--staff-muted);
+
+    font-size: .72rem;
+}
+
+.staff-field-error {
+    margin-top: .35rem;
+
+    color: #B42318;
+
+    font-size: .75rem;
+}
+
+.staff-checkbox-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem;
+}
+
+.staff-checkbox-card {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+
+    min-width: 150px;
+
+    padding: .7rem .9rem;
+
+    border: 1px solid var(--staff-line);
+    border-radius: 10px;
+
+    background: #FAFAF7;
+
+    cursor: pointer;
+
+    font-size: .85rem;
+    font-weight: 500;
+}
+
+.staff-checkbox-card input {
+    margin: 0;
+}
+
+.staff-inline-list {
+    display: flex;
+    flex-direction: column;
+    gap: .9rem;
+}
+
+.staff-inline-card {
+    padding: 1rem;
+
+    border: 1px solid var(--staff-line);
+    border-radius: 12px;
+
+    background: #FAFAF7;
+}
+
+.staff-inline-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .75rem;
+}
+
+.staff-inline-grid .staff-form-full {
+    grid-column: 1 / -1;
+}
+
+.staff-delete-check {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+
+    padding: .5rem .7rem;
+
+    border-radius: 8px;
+
+    background: #FBE5E3;
+    color: #9C2D25;
+
+    font-size: .8rem;
+
+    cursor: pointer;
+}
+
+.staff-form-submit {
+    position: sticky;
+    bottom: 0;
+
+    display: flex;
+    justify-content: flex-end;
+    gap: .75rem;
+
+    margin-top: 1rem;
+    padding: 1rem;
+
+    background: rgba(245,245,241,.96);
+
+    border-top: 1px solid var(--staff-line);
+
+    backdrop-filter: blur(8px);
+
+    z-index: 20;
+}
+
+.staff-trek-cell {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+
+.staff-trek-thumb {
+    width: 58px;
+    height: 44px;
+
+    border-radius: 8px;
+
+    object-fit: cover;
+
+    background: #EEE;
+}
+
+.staff-row-actions {
+    display: flex;
+    gap: .35rem;
+}
+
+.staff-row-actions form {
+    margin: 0;
+}
+
+.staff-row-actions button.staff-icon-button {
+    cursor: pointer;
+
+    background: #fff;
+}
+
+.staff-row-actions button.staff-icon-button:hover {
+    background: var(--staff-primary);
+}
+
+.destination-filter-grid {
+    grid-template-columns: 2fr 1fr;
+}
+
+
+@media (max-width: 1000px) {
+
+    .staff-form-grid-3,
+    .staff-inline-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .staff-page-heading-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .staff-page-heading-row .btn {
+        width: 100%;
+    }
+
+    .staff-form-grid,
+    .staff-form-grid-3,
+    .staff-inline-grid,
+    .destination-filter-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-form-full,
+    .staff-inline-grid .staff-form-full {
+        grid-column: auto;
+    }
+
+}

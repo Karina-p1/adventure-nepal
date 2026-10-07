@@ -1,0 +1,355 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Bookings{% endblock %}
+{% block page_title %}Bookings{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-page-heading">
+
+    <div>
+        <span class="staff-eyebrow">
+            OPERATIONS
+        </span>
+
+        <h1>Booking management</h1>
+
+        <p>
+            View, search and manage customer bookings.
+        </p>
+    </div>
+
+</div>
+
+
+<!-- FILTERS -->
+
+<section class="staff-panel">
+
+    <form
+        method="get"
+        class="staff-filter-form"
+    >
+
+        <div class="staff-filter-grid">
+
+            <div>
+
+                <label class="form-label">
+                    Search
+                </label>
+
+                <input
+                    type="search"
+                    name="q"
+                    class="form-control"
+                    value="{{ search }}"
+                    placeholder="Reference, customer, email or trek"
+                >
+
+            </div>
+
+
+            <div>
+
+                <label class="form-label">
+                    Booking status
+                </label>
+
+                <select
+                    name="status"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All statuses
+                    </option>
+
+                    {% for value, label in status_choices %}
+
+                        <option
+                            value="{{ value }}"
+                            {% if selected_status == value %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label class="form-label">
+                    Payment
+                </label>
+
+                <select
+                    name="payment"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All payments
+                    </option>
+
+                    {% for value, label in payment_choices %}
+
+                        <option
+                            value="{{ value }}"
+                            {% if selected_payment == value %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <label class="form-label">
+                    Trip date
+                </label>
+
+                <input
+                    type="date"
+                    name="date"
+                    class="form-control"
+                    value="{{ selected_date }}"
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="staff-filter-actions">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                <i class="bi bi-funnel me-1"></i>
+                Apply filters
+            </button>
+
+
+            <a
+                href="{% url 'dashboard:booking_list' %}"
+                class="btn btn-outline-secondary"
+            >
+                Clear
+            </a>
+
+        </div>
+
+    </form>
+
+</section>
+
+
+<!-- RESULT COUNT -->
+
+<div class="staff-list-meta">
+
+    <span>
+        {{ total_results }}
+        booking{{ total_results|pluralize }}
+    </span>
+
+</div>
+
+
+<!-- BOOKINGS -->
+
+<section class="staff-panel">
+
+    {% if bookings %}
+
+        <div class="table-responsive">
+
+            <table class="staff-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Reference</th>
+                        <th>Customer</th>
+                        <th>Trek</th>
+                        <th>Trip date</th>
+                        <th>People</th>
+                        <th>Booking</th>
+                        <th>Payment</th>
+                        <th>Total</th>
+                        <th></th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for booking in bookings %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ booking.reference }}
+                                </strong>
+
+                                <small class="staff-table-subtext">
+                                    {{ booking.created_at|date:"M d, Y" }}
+                                </small>
+                            </td>
+
+
+                            <td>
+                                {{ booking.full_name|default:booking.customer }}
+
+                                <small class="staff-table-subtext">
+                                    {{ booking.email|default:booking.customer.email }}
+                                </small>
+                            </td>
+
+
+                            <td>
+                                {{ booking.trek_title }}
+                            </td>
+
+
+                            <td>
+                                {{ booking.trek_date|date:"M d, Y" }}
+                            </td>
+
+
+                            <td>
+                                {{ booking.number_of_people }}
+                            </td>
+
+
+                            <td>
+
+                                <span class="status-badge status-{{ booking.status }}">
+                                    {{ booking.get_status_display }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="status-badge payment-{{ booking.payment_status }}">
+                                    {{ booking.get_payment_status_display }}
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if booking.total_price_usd %}
+
+                                    ${{ booking.total_price_usd|floatformat:2 }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <a
+                                    href="{% url 'dashboard:booking_detail' booking.pk %}"
+                                    class="staff-icon-button"
+                                    title="View booking"
+                                >
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if page_obj.has_other_pages %}
+
+            <div class="staff-pagination">
+
+                {% if page_obj.has_previous %}
+
+                    <a
+                        href="?q={{ search|urlencode }}&status={{ selected_status }}&payment={{ selected_payment }}&date={{ selected_date }}&page={{ page_obj.previous_page_number }}"
+                    >
+                        <i class="bi bi-chevron-left"></i>
+                        Previous
+                    </a>
+
+                {% endif %}
+
+
+                <span>
+                    Page {{ page_obj.number }}
+                    of {{ page_obj.paginator.num_pages }}
+                </span>
+
+
+                {% if page_obj.has_next %}
+
+                    <a
+                        href="?q={{ search|urlencode }}&status={{ selected_status }}&payment={{ selected_payment }}&date={{ selected_date }}&page={{ page_obj.next_page_number }}"
+                    >
+                        Next
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+
+    {% else %}
+
+        <div class="staff-empty">
+
+            <i class="bi bi-calendar-x"></i>
+
+            <h3>No bookings found</h3>
+
+            <p>
+                Try changing your search or filters.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

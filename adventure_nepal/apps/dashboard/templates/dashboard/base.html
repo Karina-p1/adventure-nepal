@@ -83,27 +83,36 @@
                 OPERATIONS
             </span>
 
-            <a href="#" class="staff-nav-link">
-                <i class="bi bi-calendar-check"></i>
-                <span>Bookings</span>
-
-                {% if pending_bookings %}
-                    <span class="staff-nav-badge">
-                        {{ pending_bookings }}
-                    </span>
-                {% endif %}
-            </a>
-
-            <a href="#" class="staff-nav-link">
-                <i class="bi bi-map"></i>
-                <span>Treks</span>
-            </a>
-
-            <a href="#" class="staff-nav-link">
-                <i class="bi bi-geo-alt"></i>
-                <span>Destinations</span>
-            </a>
-
+<a
+    href="{% url 'dashboard:booking_list' %}"
+    class="staff-nav-link
+    {% if request.resolver_match.url_name == 'booking_list' or request.resolver_match.url_name == 'booking_detail' %}
+        active
+    {% endif %}"
+>
+    <i class="bi bi-calendar-check"></i>
+    <span>Bookings</span>
+</a>
+<a
+    href="{% url 'dashboard:trek_list' %}"
+    class="staff-nav-link
+    {% if request.resolver_match.url_name == 'trek_list' or request.resolver_match.url_name == 'trek_create' or request.resolver_match.url_name == 'trek_edit' %}
+        active
+    {% endif %}"
+>
+    <i class="bi bi-map"></i>
+    <span>Treks</span>
+</a>
+<a
+    href="{% url 'dashboard:destination_list' %}"
+    class="staff-nav-link
+    {% if request.resolver_match.url_name == 'destination_list' or request.resolver_match.url_name == 'destination_create' or request.resolver_match.url_name == 'destination_edit' %}
+        active
+    {% endif %}"
+>
+    <i class="bi bi-geo-alt"></i>
+    <span>Destinations</span>
+</a>
 
             <span class="staff-nav-label">
                 PEOPLE

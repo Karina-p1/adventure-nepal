@@ -1,0 +1,258 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    {% if is_create %}
+        Add destination
+    {% else %}
+        {{ destination.name }}
+    {% endif %}
+{% endblock %}
+
+{% block page_title %}
+    Destination
+{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-detail-heading">
+
+<div>
+
+    <a
+        href="{% url 'dashboard:destination_list' %}"
+        class="staff-back-link"
+    >
+        <i class="bi bi-arrow-left"></i>
+        Back to destinations
+    </a>
+
+    <span class="staff-eyebrow">
+        DESTINATION
+    </span>
+
+    <h1>
+
+        {% if is_create %}
+            Add destination
+        {% else %}
+            {{ destination.name }}
+        {% endif %}
+
+    </h1>
+
+</div>
+
+</div>
+
+
+<form
+    method="post"
+    enctype="multipart/form-data"
+>
+
+{% csrf_token %}
+
+
+{% if form.non_field_errors %}
+
+<div class="alert alert-danger">
+    {{ form.non_field_errors }}
+</div>
+
+{% endif %}
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+        <span class="staff-eyebrow">
+            BASIC INFORMATION
+        </span>
+
+        <h2>Destination details</h2>
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+<div class="staff-form-grid">
+
+{% for field in form %}
+
+    {% if field.name == "name" or field.name == "region_type" or field.name == "hero_image" or field.name == "order" %}
+
+        <div class="staff-form-field">
+
+            <label class="form-label">
+                {{ field.label }}
+            </label>
+
+            {{ field }}
+
+            {% for error in field.errors %}
+                <div class="staff-field-error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</section>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+        <span class="staff-eyebrow">
+            CONTENT
+        </span>
+
+        <h2>Destination page</h2>
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+<div class="staff-form-grid">
+
+    <div class="staff-form-field staff-form-full">
+
+        <label class="form-label">
+            Description
+        </label>
+
+        {{ form.description }}
+
+    </div>
+
+
+    <div class="staff-form-field staff-form-full">
+
+        <label class="form-label">
+            Overview
+        </label>
+
+        {{ form.overview }}
+
+    </div>
+
+
+    <div class="staff-form-field">
+
+        <label class="form-label">
+            Best time to visit
+        </label>
+
+        {{ form.best_time_to_visit }}
+
+    </div>
+
+
+    <div class="staff-form-field">
+
+        <label class="form-label">
+            Meta description
+        </label>
+
+        {{ form.meta_description }}
+
+    </div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+        <span class="staff-eyebrow">
+            MAP
+        </span>
+
+        <h2>Location</h2>
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+<div class="staff-form-grid">
+
+    <div class="staff-form-field">
+
+        <label class="form-label">
+            Latitude
+        </label>
+
+        {{ form.latitude }}
+
+    </div>
+
+
+    <div class="staff-form-field">
+
+        <label class="form-label">
+            Longitude
+        </label>
+
+        {{ form.longitude }}
+
+    </div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<div class="staff-form-submit">
+
+    <a
+        href="{% url 'dashboard:destination_list' %}"
+        class="btn btn-outline-secondary"
+    >
+        Cancel
+    </a>
+
+    <button
+        type="submit"
+        class="btn btn-primary"
+    >
+
+        {% if is_create %}
+            Create destination
+        {% else %}
+            Save changes
+        {% endif %}
+
+    </button>
+
+</div>
+
+</form>
+
+{% endblock %}

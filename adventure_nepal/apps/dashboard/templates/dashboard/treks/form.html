@@ -1,0 +1,379 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}
+    {% if is_create %}Add trek{% else %}{{ trek.title }}{% endif %}
+{% endblock %}
+
+{% block page_title %}
+    {% if is_create %}Add trek{% else %}Edit trek{% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-detail-heading">
+
+    <div>
+
+        <a
+            href="{% url 'dashboard:trek_list' %}"
+            class="staff-back-link"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to treks
+        </a>
+
+        <span class="staff-eyebrow">
+            TREK
+        </span>
+
+        <h1>
+            {% if is_create %}
+                Add a new trek
+            {% else %}
+                {{ trek.title }}
+            {% endif %}
+        </h1>
+
+    </div>
+
+</div>
+
+
+<form
+    method="post"
+    enctype="multipart/form-data"
+>
+
+{% csrf_token %}
+
+
+{% if form.non_field_errors %}
+
+<div class="alert alert-danger">
+    {{ form.non_field_errors }}
+</div>
+
+{% endif %}
+
+
+<!-- =====================================================
+     BASIC INFORMATION
+====================================================== -->
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+        <span class="staff-eyebrow">
+            BASIC INFORMATION
+        </span>
+
+        <h2>Trip details</h2>
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+<div class="staff-form-grid">
+
+{% for field in form %}
+
+    {% if field.name == "title" or field.name == "category" or field.name == "region" or field.name == "guides" or field.name == "short_description" or field.name == "description" or field.name == "meta_description" or field.name == "cover_image" %}
+
+        <div class="staff-form-field {% if field.name == 'description' or field.name == 'short_description' or field.name == 'guides' or field.name == 'cover_image' %}staff-form-full{% endif %}">
+
+            <label class="form-label">
+                {{ field.label }}
+            </label>
+
+            {{ field }}
+
+            {% if field.help_text %}
+                <small class="staff-help">
+                    {{ field.help_text }}
+                </small>
+            {% endif %}
+
+            {% for error in field.errors %}
+                <div class="staff-field-error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     TRIP FACTS
+====================================================== -->
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+    <div>
+        <span class="staff-eyebrow">
+            TRIP FACTS
+        </span>
+
+        <h2>Duration, difficulty & group size</h2>
+    </div>
+</div>
+
+
+<div class="staff-panel-body">
+
+<div class="staff-form-grid staff-form-grid-3">
+
+{% for field in form %}
+
+    {% if field.name == "duration_days" or field.name == "max_altitude_m" or field.name == "difficulty" or field.name == "group_size_min" or field.name == "group_size_max" or field.name == "accommodation_summary" or field.name == "altitude_sickness_risk" %}
+
+        <div class="staff-form-field">
+
+            <label class="form-label">
+                {{ field.label }}
+            </label>
+
+            {{ field }}
+
+            {% for error in field.errors %}
+                <div class="staff-field-error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     SEASON
+====================================================== -->
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+        <span class="staff-eyebrow">
+            SEASON
+        </span>
+
+        <h2>Best travel period</h2>
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+<div class="staff-form-field mb-4">
+
+    <label class="form-label">
+        {{ form.best_season.label }}
+    </label>
+
+    {{ form.best_season }}
+
+</div>
+
+
+<div class="staff-checkbox-grid">
+
+{% for field in form %}
+
+    {% if field.name == "season_spring" or field.name == "season_summer" or field.name == "season_autumn" or field.name == "season_winter" %}
+
+        <label class="staff-checkbox-card">
+            {{ field }}
+
+            <span>
+                {{ field.label }}
+            </span>
+        </label>
+
+    {% endif %}
+
+{% endfor %}
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     PRICING
+====================================================== -->
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+        <span class="staff-eyebrow">
+            PRICING
+        </span>
+
+        <h2>Trip price</h2>
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+<div class="staff-form-grid">
+
+    <div class="staff-form-field">
+
+        <label class="form-label">
+            Regular price (USD)
+        </label>
+
+        {{ form.price_usd }}
+
+        {% for error in form.price_usd.errors %}
+            <div class="staff-field-error">
+                {{ error }}
+            </div>
+        {% endfor %}
+
+    </div>
+
+
+    <div class="staff-form-field">
+
+        <label class="form-label">
+            Discount price (USD)
+        </label>
+
+        {{ form.discount_price_usd }}
+
+        {% for error in form.discount_price_usd.errors %}
+            <div class="staff-field-error">
+                {{ error }}
+            </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     VISIBILITY
+====================================================== -->
+
+<section class="staff-panel">
+
+<div class="staff-panel-head">
+
+    <div>
+        <span class="staff-eyebrow">
+            VISIBILITY
+        </span>
+
+        <h2>Website placement</h2>
+    </div>
+
+</div>
+
+
+<div class="staff-panel-body">
+
+<div class="staff-checkbox-grid">
+
+    <label class="staff-checkbox-card">
+        {{ form.is_active }}
+        <span>Active</span>
+    </label>
+
+    <label class="staff-checkbox-card">
+        {{ form.is_featured }}
+        <span>Featured</span>
+    </label>
+
+    <label class="staff-checkbox-card">
+        {{ form.is_popular }}
+        <span>Popular</span>
+    </label>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     INLINE CONTENT
+====================================================== -->
+
+{% include "dashboard/treks/formset_section.html" with formset=formsets.highlights title="Highlights" eyebrow="CONTENT" %}
+
+{% include "dashboard/treks/formset_section.html" with formset=formsets.itinerary title="Itinerary" eyebrow="ITINERARY" %}
+
+{% include "dashboard/treks/formset_section.html" with formset=formsets.inclusions title="What's included / excluded" eyebrow="INCLUSIONS" %}
+
+{% include "dashboard/treks/formset_section.html" with formset=formsets.faqs title="Frequently asked questions" eyebrow="FAQ" %}
+
+{% include "dashboard/treks/formset_section.html" with formset=formsets.gallery title="Gallery" eyebrow="IMAGES" %}
+
+
+<div class="staff-form-submit">
+
+    <a
+        href="{% url 'dashboard:trek_list' %}"
+        class="btn btn-outline-secondary"
+    >
+        Cancel
+    </a>
+
+
+    <button
+        type="submit"
+        class="btn btn-primary"
+    >
+
+        {% if is_create %}
+            Create trek
+        {% else %}
+            Save changes
+        {% endif %}
+
+    </button>
+
+</div>
+
+</form>
+
+{% endblock %}

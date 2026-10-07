@@ -1,0 +1,232 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Destinations{% endblock %}
+{% block page_title %}Destinations{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-page-heading staff-page-heading-row">
+
+    <div>
+
+        <span class="staff-eyebrow">
+            OPERATIONS
+        </span>
+
+        <h1>Destination management</h1>
+
+        <p>
+            Manage destinations and the content shown on destination pages.
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'dashboard:destination_create' %}"
+        class="btn btn-primary"
+    >
+        <i class="bi bi-plus-lg me-1"></i>
+        Add destination
+    </a>
+
+</div>
+
+
+<section class="staff-panel">
+
+<form method="get" class="staff-filter-form">
+
+<div class="staff-filter-grid destination-filter-grid">
+
+    <div>
+
+        <label class="form-label">
+            Search
+        </label>
+
+        <input
+            type="search"
+            name="q"
+            value="{{ search }}"
+            class="form-control"
+            placeholder="Search destinations"
+        >
+
+    </div>
+
+
+    <div>
+
+        <label class="form-label">
+            Type
+        </label>
+
+        <select
+            name="type"
+            class="form-select"
+        >
+
+            <option value="">
+                All types
+            </option>
+
+            {% for value, label in type_choices %}
+
+                <option
+                    value="{{ value }}"
+                    {% if selected_type == value %}
+                        selected
+                    {% endif %}
+                >
+                    {{ label }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </div>
+
+</div>
+
+
+<div class="staff-filter-actions">
+
+    <button
+        class="btn btn-primary"
+        type="submit"
+    >
+        Apply
+    </button>
+
+    <a
+        href="{% url 'dashboard:destination_list' %}"
+        class="btn btn-outline-secondary"
+    >
+        Clear
+    </a>
+
+</div>
+
+</form>
+
+</section>
+
+
+<section class="staff-panel">
+
+{% if destinations %}
+
+<div class="table-responsive">
+
+<table class="staff-table">
+
+<thead>
+
+<tr>
+    <th>Destination</th>
+    <th>Type</th>
+    <th>Treks</th>
+    <th>Active treks</th>
+    <th>Best time</th>
+    <th>Order</th>
+    <th></th>
+</tr>
+
+</thead>
+
+
+<tbody>
+
+{% for destination in destinations %}
+
+<tr>
+
+    <td>
+
+        <div class="staff-trek-cell">
+
+            {% if destination.hero_image %}
+
+                <img
+                    src="{{ destination.hero_image.url }}"
+                    alt=""
+                    class="staff-trek-thumb"
+                >
+
+            {% endif %}
+
+            <strong>
+                {{ destination.name }}
+            </strong>
+
+        </div>
+
+    </td>
+
+
+    <td>
+        {{ destination.get_region_type_display }}
+    </td>
+
+
+    <td>
+        {{ destination.trek_count }}
+    </td>
+
+
+    <td>
+        {{ destination.active_trek_count }}
+    </td>
+
+
+    <td>
+        {{ destination.best_time_to_visit|default:"—" }}
+    </td>
+
+
+    <td>
+        {{ destination.order }}
+    </td>
+
+
+    <td>
+
+        <a
+            href="{% url 'dashboard:destination_edit' destination.pk %}"
+            class="staff-icon-button"
+            title="Edit destination"
+        >
+            <i class="bi bi-pencil"></i>
+        </a>
+
+    </td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+{% else %}
+
+<div class="staff-empty">
+
+    <i class="bi bi-geo-alt"></i>
+
+    <h3>No destinations found</h3>
+
+</div>
+
+{% endif %}
+
+</section>
+
+{% endblock %}

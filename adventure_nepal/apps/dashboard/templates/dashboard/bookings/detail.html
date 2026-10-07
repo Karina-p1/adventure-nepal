@@ -1,0 +1,501 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}{{ booking.reference }}{% endblock %}
+{% block page_title %}Booking details{% endblock %}
+
+
+{% block content %}
+
+<div class="staff-detail-heading">
+
+    <div>
+
+        <a
+            href="{% url 'dashboard:booking_list' %}"
+            class="staff-back-link"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Back to bookings
+        </a>
+
+
+        <span class="staff-eyebrow">
+            BOOKING
+        </span>
+
+        <h1>
+            {{ booking.reference }}
+        </h1>
+
+
+        <div class="staff-detail-statuses">
+
+            <span class="status-badge status-{{ booking.status }}">
+                {{ booking.get_status_display }}
+            </span>
+
+            <span class="status-badge payment-{{ booking.payment_status }}">
+                {{ booking.get_payment_status_display }}
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="staff-detail-actions">
+
+        {% if booking.status == "pending" %}
+
+            <form
+                method="post"
+                action="{% url 'dashboard:booking_status_action' booking.pk 'confirm' %}"
+            >
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    <i class="bi bi-check2-circle me-1"></i>
+                    Confirm
+                </button>
+
+            </form>
+
+        {% endif %}
+
+
+        {% if booking.status == "pending" or booking.status == "confirmed" %}
+
+            <form
+                method="post"
+                action="{% url 'dashboard:booking_status_action' booking.pk 'cancel' %}"
+                onsubmit="return confirm('Cancel this booking?');"
+            >
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-danger"
+                >
+                    Cancel booking
+                </button>
+
+            </form>
+
+        {% endif %}
+
+
+        {% if booking.status == "confirmed" %}
+
+            <form
+                method="post"
+                action="{% url 'dashboard:booking_status_action' booking.pk 'complete' %}"
+            >
+                {% csrf_token %}
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-primary"
+                >
+                    <i class="bi bi-check-all me-1"></i>
+                    Mark completed
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<div class="staff-detail-grid">
+
+
+    <!-- LEFT -->
+
+    <div>
+
+
+        <!-- TRIP -->
+
+        <section class="staff-panel">
+
+            <div class="staff-panel-head">
+
+                <div>
+                    <span class="staff-eyebrow">
+                        TRIP
+                    </span>
+
+                    <h2>Booking information</h2>
+                </div>
+
+            </div>
+
+
+            <div class="staff-info-grid">
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Trek
+                    </span>
+
+                    <strong>
+                        {{ booking.trek_title }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Trip date
+                    </span>
+
+                    <strong>
+                        {{ booking.trek_date|date:"F d, Y" }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Travelers
+                    </span>
+
+                    <strong>
+                        {{ booking.number_of_people }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Price per person
+                    </span>
+
+                    <strong>
+
+                        {% if booking.price_per_person_usd %}
+
+                            ${{ booking.price_per_person_usd|floatformat:2 }}
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Total
+                    </span>
+
+                    <strong class="staff-price">
+
+                        {% if booking.total_price_usd %}
+
+                            ${{ booking.total_price_usd|floatformat:2 }}
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Submitted
+                    </span>
+
+                    <strong>
+                        {{ booking.created_at|date:"M d, Y · g:i A" }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CUSTOMER -->
+
+        <section class="staff-panel">
+
+            <div class="staff-panel-head">
+
+                <div>
+
+                    <span class="staff-eyebrow">
+                        CUSTOMER
+                    </span>
+
+                    <h2>Contact information</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="staff-info-grid">
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Full name
+                    </span>
+
+                    <strong>
+                        {{ booking.full_name|default:booking.customer }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Account
+                    </span>
+
+                    <strong>
+                        {{ booking.customer.username }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Email
+                    </span>
+
+                    <strong>
+                        {{ booking.email|default:booking.customer.email }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Phone
+                    </span>
+
+                    <strong>
+                        {{ booking.phone|default:"—" }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span class="staff-info-label">
+                        Country
+                    </span>
+
+                    <strong>
+                        {{ booking.country|default:"—" }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- REQUESTS -->
+
+        <section class="staff-panel">
+
+            <div class="staff-panel-head">
+
+                <div>
+
+                    <span class="staff-eyebrow">
+                        NOTES
+                    </span>
+
+                    <h2>Special requests</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="staff-panel-body">
+
+                {% if booking.special_requests %}
+
+                    <p class="mb-0">
+                        {{ booking.special_requests|linebreaksbr }}
+                    </p>
+
+                {% else %}
+
+                    <p class="text-muted mb-0">
+                        No special requests were provided.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- RIGHT -->
+
+    <aside>
+
+
+        <!-- PAYMENT -->
+
+        <section class="staff-panel">
+
+            <div class="staff-panel-head">
+
+                <div>
+
+                    <span class="staff-eyebrow">
+                        PAYMENT
+                    </span>
+
+                    <h2>Payment status</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="staff-panel-body">
+
+                <form
+                    method="post"
+                    action="{% url 'dashboard:booking_payment_update' booking.pk %}"
+                >
+
+                    {% csrf_token %}
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    {{ payment_form.payment_status }}
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary w-100 mt-3"
+                    >
+                        Update payment
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- SUMMARY -->
+
+        <section class="staff-panel">
+
+            <div class="staff-panel-head">
+
+                <div>
+
+                    <span class="staff-eyebrow">
+                        SUMMARY
+                    </span>
+
+                    <h2>Booking total</h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="staff-panel-body">
+
+                <div class="staff-price-summary">
+
+                    <div>
+
+                        <span>
+                            Price per person
+                        </span>
+
+                        <strong>
+                            ${{ booking.price_per_person_usd|floatformat:2 }}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Travelers
+                        </span>
+
+                        <strong>
+                            × {{ booking.number_of_people }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="staff-price-total">
+
+                        <span>
+                            Total
+                        </span>
+
+                        <strong>
+                            ${{ booking.total_price_usd|floatformat:2 }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </aside>
+
+</div>
+
+{% endblock %}
